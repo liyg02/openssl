@@ -12,11 +12,11 @@
 #include <openssl/asn1t.h>
 #include <openssl/x509.h>
 #include <openssl/evp.h>
-#include "dh_locl.h"
+#include "dh_local.h"
 #include <openssl/bn.h>
 #include <openssl/dsa.h>
 #include <openssl/objects.h>
-#include "internal/evp_int.h"
+#include "crypto/evp.h"
 
 /* DH pkey context structure */
 
@@ -80,6 +80,7 @@ static void pkey_dh_cleanup(EVP_PKEY_CTX *ctx)
 static int pkey_dh_copy(EVP_PKEY_CTX *dst, const EVP_PKEY_CTX *src)
 {
     DH_PKEY_CTX *dctx, *sctx;
+
     if (!pkey_dh_init(dst))
         return 0;
     sctx = src->data;

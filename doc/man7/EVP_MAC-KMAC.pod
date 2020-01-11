@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-EVP_MAC-KMAC, EVP_MAC-KMAC256, EVP_MAC-KMAC256
+EVP_MAC-KMAC, EVP_MAC-KMAC128, EVP_MAC-KMAC256
 - The KMAC EVP_MAC implementations
 
 =head1 DESCRIPTION
@@ -16,9 +16,9 @@ properties, to be used with EVP_MAC_fetch():
 
 =over 4
 
-=item "KMAC128", "default=yes"
+=item "KMAC-128", "default=yes"
 
-=item "KMAC256", "default=yes"
+=item "KMAC-256", "default=yes"
 
 =back
 
@@ -34,18 +34,18 @@ The length of the "size" parameter should not exceed that of a B<size_t>.
 
 =over 4
 
-=item B<OSSL_MAC_PARAM_KEY> ("key") <octet string>
+=item "key" (B<OSSL_MAC_PARAM_KEY>) <octet string>
 
-=item B<OSSL_MAC_PARAM_CUSTOM> ("custom") <octet string>
+=item "custom" (B<OSSL_MAC_PARAM_CUSTOM>) <octet string>
 
-=item B<OSSL_MAC_PARAM_SIZE> ("size") <unsigned integer>
+=item "size" (B<OSSL_MAC_PARAM_SIZE>) <unsigned integer>
 
-=item B<OSSL_MAC_PARAM_XOF>
+=item "xof" (B<OSSL_MAC_PARAM_XOF>) <integer>
 
 =back
 
-The "xof" parameter value is exptect to be 1 or 0. Use 1 to enable XOF
-mode. If XOF is enabled then the output len that is encoded as part of
+The "xof" parameter value is expected to be 1 or 0. Use 1 to enable XOF
+mode. If XOF is enabled then the output length that is encoded as part of
 the input stream is set to zero.
 
 =head1 SEE ALSO

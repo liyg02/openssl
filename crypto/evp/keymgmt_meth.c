@@ -13,8 +13,8 @@
 #include <openssl/err.h>
 #include "internal/provider.h"
 #include "internal/refcount.h"
-#include "internal/evp_int.h"
-#include "evp_locl.h"
+#include "crypto/evp.h"
+#include "evp_local.h"
 
 
 static void *keymgmt_new(void)
@@ -35,8 +35,7 @@ static void *keymgmt_new(void)
 
 static void *keymgmt_from_dispatch(int name_id,
                                    const OSSL_DISPATCH *fns,
-                                   OSSL_PROVIDER *prov,
-                                   void *unused)
+                                   OSSL_PROVIDER *prov)
 {
     EVP_KEYMGMT *keymgmt = NULL;
 
@@ -119,6 +118,12 @@ static void *keymgmt_from_dispatch(int name_id,
             keymgmt->exportkey_types =
                 OSSL_get_OP_keymgmt_exportkey_types(fns);
             break;
+        case OSSL_FUNC_KEYMGMT_QUERY_OPERATION_NAME:
+            if (keymgmt->query_operation_name != NULL)
+                break;
+            keymgmt->query_operation_name =
+                OSSL_get_OP_keymgmt_query_operation_name(fns);
+            break;
         }
     }
     /*
@@ -158,7 +163,7 @@ EVP_KEYMGMT *evp_keymgmt_fetch_by_number(OPENSSL_CTX *ctx, int name_id,
 {
     return evp_generic_fetch_by_number(ctx,
                                        OSSL_OP_KEYMGMT, name_id, properties,
-                                       keymgmt_from_dispatch, NULL,
+                                       keymgmt_from_dispatch,
                                        (int (*)(void *))EVP_KEYMGMT_up_ref,
                                        (void (*)(void *))EVP_KEYMGMT_free);
 }
@@ -167,7 +172,7 @@ EVP_KEYMGMT *EVP_KEYMGMT_fetch(OPENSSL_CTX *ctx, const char *algorithm,
                                const char *properties)
 {
     return evp_generic_fetch(ctx, OSSL_OP_KEYMGMT, algorithm, properties,
-                             keymgmt_from_dispatch, NULL,
+                             keymgmt_from_dispatch,
                              (int (*)(void *))EVP_KEYMGMT_up_ref,
                              (void (*)(void *))EVP_KEYMGMT_free);
 }
@@ -200,3 +205,30 @@ const OSSL_PROVIDER *EVP_KEYMGMT_provider(const EVP_KEYMGMT *keymgmt)
     return keymgmt->prov;
 }
 
+int EVP_KEYMGMT_number(const EVP_KEYMGMT *keymgmt)
+{
+    return keymgmt->name_id;
+}
+
+int EVP_KEYMGMT_is_a(const EVP_KEYMGMT *keymgmt, const char *name)
+{
+    return evp_is_a(keymgmt->prov, keymgmt->name_id, name);
+}
+
+void EVP_KEYMGMT_do_all_provided(OPENSSL_CTX *libctx,
+                                 void (*fn)(EVP_KEYMGMT *keymgmt, void *arg),
+                                 void *arg)
+{
+    evp_generic_do_all(libctx, OSSL_OP_KEYMGMT,
+                       (void (*)(void *, void *))fn, arg,
+                       keymgmt_from_dispatch,
+                       (void (*)(void *))EVP_KEYMGMT_free);
+}
+
+void EVP_KEYMGMT_names_do_all(const EVP_KEYMGMT *keymgmt,
+                              void (*fn)(const char *name, void *data),
+                              void *data)
+{
+    if (keymgmt->prov != NULL)
+        evp_names_do_all(keymgmt->prov, keymgmt->name_id, fn, data);
+}
