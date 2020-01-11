@@ -234,7 +234,7 @@ respective B<cipher> function.
 
 =head1 SEE ALSO
 
-L<EVP_EncryptInit(3)>
+L<EVP_EncryptInit>
 
 =head1 HISTORY
 

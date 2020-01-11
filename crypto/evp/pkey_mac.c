@@ -13,8 +13,8 @@
 #include <openssl/engine.h>
 #include <openssl/params.h>
 #include <openssl/core_names.h>
-#include "crypto/evp.h"
-#include "evp_local.h"
+#include "internal/evp_int.h"
+#include "evp_locl.h"
 
 /* MAC PKEY context structure */
 
@@ -452,7 +452,7 @@ static int pkey_mac_ctrl_str(EVP_PKEY_CTX *ctx,
         type = OSSL_MAC_PARAM_SIZE;
 
     if (!OSSL_PARAM_allocate_from_text(&params[0],
-                                       EVP_MAC_settable_ctx_params(mac),
+                                       EVP_MAC_CTX_settable_params(mac),
                                        type, value, strlen(value) + 1))
         return 0;
     params[1] = OSSL_PARAM_construct_end();

@@ -37,10 +37,7 @@ typedef enum OPTION_choice {
 } OPTION_CHOICE;
 
 const OPTIONS version_options[] = {
-    OPT_SECTION("General"),
     {"help", OPT_HELP, '-', "Display this summary"},
-
-    OPT_SECTION("Output"),
     {"a", OPT_A, '-', "Show all data"},
     {"b", OPT_B, '-', "Show build date"},
     {"d", OPT_D, '-', "Show configuration directory"},
@@ -140,6 +137,9 @@ opthelp:
 #endif
 #ifndef OPENSSL_NO_IDEA
         printf(" %s", IDEA_options());
+#endif
+#ifndef OPENSSL_NO_BF
+        printf(" %s", BF_options());
 #endif
         printf("\n");
     }

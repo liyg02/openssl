@@ -9,9 +9,9 @@
  */
 
 #include <openssl/params.h>
-#include <openssl/types.h>
+#include <openssl/ossl_typ.h>
 
-#define OSSL_PARAM_BLD_MAX 25
+#define OSSL_PARAM_BLD_MAX 10
 
 typedef struct {
     const char *key;

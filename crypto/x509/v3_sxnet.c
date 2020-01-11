@@ -139,8 +139,7 @@ int SXNET_add_id_INTEGER(SXNET **psx, ASN1_INTEGER *zone, const char *user,
 {
     SXNET *sx = NULL;
     SXNETID *id = NULL;
-
-    if (psx == NULL || zone == NULL || user == NULL) {
+    if (!psx || !zone || !user) {
         X509V3err(X509V3_F_SXNET_ADD_ID_INTEGER,
                   X509V3_R_INVALID_NULL_ARGUMENT);
         return 0;

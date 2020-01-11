@@ -108,8 +108,7 @@ See RFC 6962, Section 3.2 for the definition of LogID.
 
 =item *
 
-SCT_set_timestamp() to set the time the SCT was issued (time in milliseconds
-since the Unix Epoch).
+SCT_set_timestamp() to set the time the SCT was issued (epoch time in milliseconds).
 
 =item *
 
@@ -150,7 +149,7 @@ B<CT_LOG_ENTRY_TYPE_PRECERT> for a pre-certificate.
 
 =item *
 
-The time that the SCT was issued (time in milliseconds since the Unix Epoch).
+The time that the SCT was issued (epoch time in milliseconds).
 
 =item *
 

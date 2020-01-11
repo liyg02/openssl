@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_COMPERR_H
-# define OPENSSL_COMPERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_COMPERR_H
-# endif
+#ifndef HEADER_COMPERR_H
+# define HEADER_COMPERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -33,7 +27,7 @@ int ERR_load_COMP_strings(void);
 /*
  * COMP function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #   define COMP_F_BIO_ZLIB_FLUSH                            0
 #   define COMP_F_BIO_ZLIB_NEW                              0
 #   define COMP_F_BIO_ZLIB_READ                             0

@@ -7,14 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_DTLS1_H
-# define OPENSSL_DTLS1_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_DTLS1_H
-# endif
+#ifndef HEADER_DTLS1_H
+# define HEADER_DTLS1_H
 
 #ifdef  __cplusplus
 extern "C" {
@@ -24,7 +18,7 @@ extern "C" {
 
 # define DTLS1_VERSION                   0xFEFF
 # define DTLS1_2_VERSION                 0xFEFD
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define DTLS_MIN_VERSION                DTLS1_VERSION
 #  define DTLS_MAX_VERSION                DTLS1_2_VERSION
 # endif

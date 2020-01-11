@@ -32,7 +32,6 @@ my %cert_expected = (
     "cert-256line.pem" => 1,
     "cert-257line.pem" => 1,
     "cert-blankline.pem" => 0,
-    "cert-bom.pem" => 1,
     "cert-comment.pem" => 0,
     "cert-earlypad.pem" => 0,
     "cert-extrapad.pem" => 0,

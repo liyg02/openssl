@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_ASN1ERR_H
-# define OPENSSL_ASN1ERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_ASN1ERR_H
-# endif
+#ifndef HEADER_ASN1ERR_H
+# define HEADER_ASN1ERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -29,7 +23,7 @@ int ERR_load_ASN1_strings(void);
 /*
  * ASN1 function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define ASN1_F_A2D_ASN1_OBJECT                           0
 #  define ASN1_F_A2I_ASN1_INTEGER                          0
 #  define ASN1_F_A2I_ASN1_STRING                           0

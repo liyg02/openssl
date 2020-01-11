@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_CRYPTOERR_H
-# define OPENSSL_CRYPTOERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_CRYPTOERR_H
-# endif
+#ifndef HEADER_CRYPTOERR_H
+# define HEADER_CRYPTOERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -29,7 +23,7 @@ int ERR_load_CRYPTO_strings(void);
 /*
  * CRYPTO function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define CRYPTO_F_CMAC_CTX_NEW                            0
 #  define CRYPTO_F_CRYPTO_DUP_EX_DATA                      0
 #  define CRYPTO_F_CRYPTO_FREE_EX_DATA                     0
@@ -83,8 +77,6 @@ int ERR_load_CRYPTO_strings(void);
 /*
  * CRYPTO reason codes.
  */
-# define CRYPTO_R_BAD_ALGORITHM_NAME                      117
-# define CRYPTO_R_CONFLICTING_NAMES                       118
 # define CRYPTO_R_FIPS_MODE_NOT_SUPPORTED                 101
 # define CRYPTO_R_ILLEGAL_HEX_DIGIT                       102
 # define CRYPTO_R_INSUFFICIENT_DATA_SPACE                 106

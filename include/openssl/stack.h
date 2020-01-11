@@ -7,14 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_STACK_H
-# define OPENSSL_STACK_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_STACK_H
-# endif
+#ifndef HEADER_STACK_H
+# define HEADER_STACK_H
 
 #ifdef  __cplusplus
 extern "C" {
@@ -56,7 +50,7 @@ OPENSSL_STACK *OPENSSL_sk_dup(const OPENSSL_STACK *st);
 void OPENSSL_sk_sort(OPENSSL_STACK *st);
 int OPENSSL_sk_is_sorted(const OPENSSL_STACK *st);
 
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 #  define _STACK OPENSSL_STACK
 #  define sk_num OPENSSL_sk_num
 #  define sk_value OPENSSL_sk_value

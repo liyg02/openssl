@@ -10,9 +10,9 @@
 #include <string.h>
 
 #include <openssl/evp.h>
-#include "crypto/evp.h"
+#include "internal/evp_int.h"
 #include "internal/provider.h"
-#include "evp_local.h"
+#include "evp_locl.h"
 
 EVP_CIPHER *EVP_CIPHER_meth_new(int cipher_type, int block_size, int key_len)
 {

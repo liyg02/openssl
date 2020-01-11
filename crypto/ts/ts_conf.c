@@ -283,10 +283,9 @@ int TS_CONF_set_def_policy(CONF *conf, const char *section,
 {
     int ret = 0;
     ASN1_OBJECT *policy_obj = NULL;
-
-    if (policy == NULL)
+    if (!policy)
         policy = NCONF_get_string(conf, section, ENV_DEFAULT_POLICY);
-    if (policy == NULL) {
+    if (!policy) {
         ts_CONF_lookup_fail(section, ENV_DEFAULT_POLICY);
         goto err;
     }

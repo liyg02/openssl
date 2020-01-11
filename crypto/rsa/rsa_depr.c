@@ -13,7 +13,7 @@
  */
 
 #include <openssl/opensslconf.h>
-#ifdef OPENSSL_NO_DEPRECATED_0_9_8
+#if OPENSSL_API_0_9_8
 NON_EMPTY_TRANSLATION_UNIT
 
 #else

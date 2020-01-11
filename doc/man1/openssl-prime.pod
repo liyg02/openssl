@@ -10,14 +10,14 @@ B<openssl prime>
 [B<-help>]
 [B<-hex>]
 [B<-generate>]
-[B<-bits> I<num>]
+[B<-bits>]
 [B<-safe>]
-[B<-checks> I<num>]
-[I<number> ...]
+[B<-checks>]
+[I<number...>]
 
 =head1 DESCRIPTION
 
-This command checks if the specified numbers are prime.
+The B<prime> command checks if the specified numbers are prime.
 
 If no numbers are given on the command line, the B<-generate> flag should
 be used to generate primes according to the requirements specified by the
@@ -27,30 +27,31 @@ rest of the flags.
 
 =over 4
 
-=item B<-help>
+=item [B<-help>]
 
 Display an option summary.
 
-=item B<-hex>
+=item [B<-hex>]
 
 Generate hex output.
 
-=item B<-generate>
+=item [B<-generate>]
 
 Generate a prime number.
 
-=item B<-bits> I<num>
+=item [B<-bits num>]
 
-Generate a prime with I<num> bits.
+Generate a prime with B<num> bits.
 
-=item B<-safe>
+=item [B<-safe>]
 
 When used with B<-generate>, generates a "safe" prime. If the number
-generated is I<n>, then check that C<(I<n>-1)/2> is also prime.
+generated is B<n>, then check that B<(n-1)/2> is also prime.
 
-=item B<-checks> I<num>
+=item [B<-checks num>]
 
-This parameter is ignored.
+Perform the checks B<num> times to see that the generated number
+is prime.  The default is 20.
 
 =back
 

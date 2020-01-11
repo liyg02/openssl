@@ -78,8 +78,7 @@ static void *v2i_POLICY_CONSTRAINTS(const X509V3_EXT_METHOD *method,
             goto err;
         }
     }
-    if (pcons->inhibitPolicyMapping == NULL
-            && pcons->requireExplicitPolicy == NULL) {
+    if (!pcons->inhibitPolicyMapping && !pcons->requireExplicitPolicy) {
         X509V3err(X509V3_F_V2I_POLICY_CONSTRAINTS,
                   X509V3_R_ILLEGAL_EMPTY_EXTENSION);
         goto err;

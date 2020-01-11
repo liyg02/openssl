@@ -7,24 +7,19 @@ openssl-provider - load and query providers
 =head1 SYNOPSIS
 
 B<openssl provider>
-[B<-help>]
 [B<-v>]
 [B<-vv>]
 [B<-vvv>]
-[I<provider> ...]
+[ I<provider...> ]
 
 =head1 DESCRIPTION
 
-This command is used to query the capabilities of the
-specified I<provider>'s.
+The B<provider> command is used to query the capabilities of the specified
+I<provider>'s.
 
 =head1 OPTIONS
 
 =over 4
-
-=item B<-help>
-
-Print out a usage message.
 
 =item B<-v> B<-vv> B<-vvv>
 

@@ -86,7 +86,6 @@ $code.=<<___;
 .type	__KeccakF1600,\@abi-omnipotent
 .align	32
 __KeccakF1600:
-.cfi_startproc
 	mov	$A[4][0](%rdi),@C[0]
 	mov	$A[4][1](%rdi),@C[1]
 	mov	$A[4][2](%rdi),@C[2]
@@ -345,7 +344,6 @@ $code.=<<___;
 
 	lea	-192($iotas),$iotas	# rewind iotas
 	ret
-.cfi_endproc
 .size	__KeccakF1600,.-__KeccakF1600
 
 .type	KeccakF1600,\@abi-omnipotent

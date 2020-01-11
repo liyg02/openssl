@@ -128,7 +128,7 @@ BIO_get_retry_reason() returns the reason for a special condition.
 
 =head1 SEE ALSO
 
-L<bio(7)>
+L<bio>
 
 =head1 HISTORY
 

@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-fips_config - OpenSSL FIPS configuration
+OPENSSL FIPS CONFIGURATION
 
 =head1 DESCRIPTION
 

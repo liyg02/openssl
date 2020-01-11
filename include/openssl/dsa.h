@@ -7,14 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_DSA_H
-# define OPENSSL_DSA_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_DSA_H
-# endif
+#ifndef HEADER_DSA_H
+# define HEADER_DSA_H
 
 # include <openssl/opensslconf.h>
 
@@ -26,9 +20,9 @@ extern "C" {
 # include <openssl/asn1.h>
 # include <openssl/bio.h>
 # include <openssl/crypto.h>
-# include <openssl/types.h>
+# include <openssl/ossl_typ.h>
 # include <openssl/bn.h>
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 #  include <openssl/dh.h>
 # endif
 # include <openssl/dsaerr.h>
@@ -40,7 +34,7 @@ extern "C" {
 # define OPENSSL_DSA_FIPS_MIN_MODULUS_BITS 1024
 
 # define DSA_FLAG_CACHE_MONT_P   0x01
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 /*
  * Does nothing. Previously this switched off constant time behaviour.
  */
@@ -105,7 +99,7 @@ int DSA_size(const DSA *);
 int DSA_bits(const DSA *d);
 int DSA_security_bits(const DSA *d);
         /* next 4 return -1 on error */
-DEPRECATEDIN_3_0(int DSA_sign_setup(DSA *dsa, BN_CTX *ctx_in, BIGNUM **kinvp, BIGNUM **rp))
+DEPRECATEDIN_3(int DSA_sign_setup(DSA *dsa, BN_CTX *ctx_in, BIGNUM **kinvp, BIGNUM **rp))
 int DSA_sign(int type, const unsigned char *dgst, int dlen,
              unsigned char *sig, unsigned int *siglen, DSA *dsa);
 int DSA_verify(int type, const unsigned char *dgst, int dgst_len,
@@ -144,17 +138,15 @@ int DSAparams_print_fp(FILE *fp, const DSA *x);
 int DSA_print_fp(FILE *bp, const DSA *x, int off);
 # endif
 
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define DSS_prime_checks 64
+# define DSS_prime_checks 64
 /*
  * Primality test according to FIPS PUB 186-4, Appendix C.3. Since we only
  * have one value here we set the number of checks to 64 which is the 128 bit
  * security level that is the highest level and valid for creating a 3072 bit
  * DSA key.
  */
-#  define DSA_is_prime(n, callback, cb_arg) \
-           BN_is_prime(n, DSS_prime_checks, callback, NULL, cb_arg)
-# endif
+# define DSA_is_prime(n, callback, cb_arg) \
+        BN_is_prime(n, DSS_prime_checks, callback, NULL, cb_arg)
 
 # ifndef OPENSSL_NO_DH
 /*

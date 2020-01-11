@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_DHERR_H
-# define OPENSSL_DHERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_DHERR_H
-# endif
+#ifndef HEADER_DHERR_H
+# define HEADER_DHERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -33,7 +27,7 @@ int ERR_load_DH_strings(void);
 /*
  * DH function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #   define DH_F_COMPUTE_KEY                                 0
 #   define DH_F_DHPARAMS_PRINT_FP                           0
 #   define DH_F_DH_BUF2KEY                                  0

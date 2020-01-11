@@ -24,12 +24,12 @@
 #include <openssl/store.h>
 #include <openssl/ui.h>
 #include <openssl/x509.h>        /* For the PKCS8 stuff o.O */
-#include "crypto/asn1.h"
-#include "crypto/ctype.h"
+#include "internal/asn1_int.h"
+#include "internal/ctype.h"
 #include "internal/o_dir.h"
 #include "internal/cryptlib.h"
-#include "crypto/store.h"
-#include "store_local.h"
+#include "internal/store_int.h"
+#include "store_locl.h"
 
 #ifdef _WIN32
 # define stat    _stat
@@ -930,8 +930,7 @@ static int file_expect(OSSL_STORE_LOADER_CTX *ctx, int expected)
     return 1;
 }
 
-static int file_find(OSSL_STORE_LOADER_CTX *ctx,
-                     const OSSL_STORE_SEARCH *search)
+static int file_find(OSSL_STORE_LOADER_CTX *ctx, OSSL_STORE_SEARCH *search)
 {
     /*
      * If ctx == NULL, the library is looking to know if this loader supports

@@ -8,8 +8,10 @@
 
 my $obj_dat_h = $ARGV[0];
 
-# The year the output file is generated.
-my $YEAR = [localtime()]->[5] + 1900;
+# Output year depends on the date on the input file and the script.
+my $YEAR = [localtime([stat($0)]->[9])]->[5] + 1900;
+my $iYEAR = [localtime([stat($obj_dat_h)]->[9])]->[5] + 1900;
+$YEAR = $iYEAR if $iYEAR > $YEAR;
 
 open IN, '<', $obj_dat_h
     || die "Couldn't open $obj_dat_h : $!\n";

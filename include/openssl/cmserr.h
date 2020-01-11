@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_CMSERR_H
-# define OPENSSL_CMSERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_CMSERR_H
-# endif
+#ifndef HEADER_CMSERR_H
+# define HEADER_CMSERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -33,7 +27,7 @@ int ERR_load_CMS_strings(void);
 /*
  * CMS function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #   define CMS_F_CHECK_CONTENT                              0
 #   define CMS_F_CMS_ADD0_CERT                              0
 #   define CMS_F_CMS_ADD0_RECIPIENT_KEY                     0

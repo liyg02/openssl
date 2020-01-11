@@ -1,13 +1,12 @@
 ---
 name: Bug report
-labels: 'issue: bug report'
+labels: bug
 about: Report a defect in the software
 
 ---
 
 <!--
-Thank you for your bug report. If this is your first one,
-please take the time to read the following lines before posting it.
+Thank you for your bug report.
 
 NOTE:
 

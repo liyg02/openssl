@@ -6,7 +6,7 @@ BIO_f_cipher, BIO_set_cipher, BIO_get_cipher_status, BIO_get_cipher_ctx - cipher
 
 =head1 SYNOPSIS
 
-=for openssl multiple includes
+=for comment multiple includes
 
  #include <openssl/bio.h>
  #include <openssl/evp.h>

@@ -7,8 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_FIPS_NAMES_H
-# define OPENSSL_FIPS_NAMES_H
+#ifndef OSSL_FIPS_NAMES_H
+# define OSSL_FIPS_NAMES_H
 
 # ifdef __cplusplus
 extern "C" {
@@ -43,4 +43,4 @@ extern "C" {
 }
 # endif
 
-#endif /* OPENSSL_FIPS_NAMES_H */
+#endif /* OSSL_FIPS_NAMES_H */

@@ -8,10 +8,9 @@
  */
 
 /*
- * BF low level APIs are deprecated for public use, but still ok for internal
- * use.
+ * This has been a quickly hacked 'ideatest.c'.  When I add tests for other
+ * RC2 modes, more of the code will be uncommented.
  */
-#include "internal/deprecated.h"
 
 #include <stdio.h>
 #include <string.h>

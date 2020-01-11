@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_DSAERR_H
-# define OPENSSL_DSAERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_DSAERR_H
-# endif
+#ifndef HEADER_DSAERR_H
+# define HEADER_DSAERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -33,7 +27,7 @@ int ERR_load_DSA_strings(void);
 /*
  * DSA function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #   define DSA_F_DSAPARAMS_PRINT                            0
 #   define DSA_F_DSAPARAMS_PRINT_FP                         0
 #   define DSA_F_DSA_BUILTIN_PARAMGEN                       0

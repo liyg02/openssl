@@ -54,9 +54,7 @@ static BIO *get_next_file(const char *path, OPENSSL_DIR_CTX **dirctx);
 
 static CONF *def_create(CONF_METHOD *meth);
 static int def_init_default(CONF *conf);
-#ifndef OPENSSL_NO_DEPRECATED_3_0
 static int def_init_WIN32(CONF *conf);
-#endif
 static int def_destroy(CONF *conf);
 static int def_destroy_data(CONF *conf);
 static int def_load(CONF *conf, const char *name, long *eline);
@@ -78,12 +76,6 @@ static CONF_METHOD default_method = {
     def_load
 };
 
-CONF_METHOD *NCONF_default(void)
-{
-    return &default_method;
-}
-
-#ifndef OPENSSL_NO_DEPRECATED_3_0
 static CONF_METHOD WIN32_method = {
     "WIN32",
     def_create,
@@ -97,11 +89,15 @@ static CONF_METHOD WIN32_method = {
     def_load
 };
 
+CONF_METHOD *NCONF_default(void)
+{
+    return &default_method;
+}
+
 CONF_METHOD *NCONF_WIN32(void)
 {
     return &WIN32_method;
 }
-#endif
 
 static CONF *def_create(CONF_METHOD *meth)
 {
@@ -121,26 +117,24 @@ static int def_init_default(CONF *conf)
     if (conf == NULL)
         return 0;
 
-    memset(conf, 0, sizeof(*conf));
     conf->meth = &default_method;
     conf->meth_data = (void *)CONF_type_default;
+    conf->data = NULL;
 
     return 1;
 }
 
-#ifndef OPENSSL_NO_DEPRECATED_3_0
 static int def_init_WIN32(CONF *conf)
 {
     if (conf == NULL)
         return 0;
 
-    memset(conf, 0, sizeof(*conf));
     conf->meth = &WIN32_method;
     conf->meth_data = (void *)CONF_type_win32;
+    conf->data = NULL;
 
     return 1;
 }
-#endif
 
 static int def_destroy(CONF *conf)
 {
@@ -354,49 +348,7 @@ static int def_load_bio(CONF *conf, BIO *in, long *line)
                 psection = section;
             }
             p = eat_ws(conf, end);
-            if (strncmp(pname, ".pragma", 7) == 0
-                && (p != pname + 7 || *p == '=')) {
-                char *pval;
-
-                if (*p == '=') {
-                    p++;
-                    p = eat_ws(conf, p);
-                }
-                trim_ws(conf, p);
-
-                /* Pragma values take the form keyword:value */
-                pval = strchr(p, ':');
-                if (pval == NULL || pval == p || pval[1] == '\0') {
-                    CONFerr(CONF_F_DEF_LOAD_BIO, CONF_R_INVALID_PRAGMA);
-                    goto err;
-                }
-
-                *pval++ = '\0';
-                trim_ws(conf, p);
-                pval = eat_ws(conf, pval);
-
-                /*
-                 * Known pragmas:
-                 *
-                 * dollarid     takes "on", "true or "off", "false"
-                 */
-                if (strcmp(p, "dollarid") == 0) {
-                    if (strcmp(pval, "on") == 0
-                        || strcmp(pval, "true") == 0) {
-                        conf->flag_dollarid = 1;
-                    } else if (strcmp(pval, "off") == 0
-                               || strcmp(pval, "false") == 0) {
-                        conf->flag_dollarid = 0;
-                    } else {
-                        CONFerr(CONF_F_DEF_LOAD_BIO, CONF_R_INVALID_PRAGMA);
-                        goto err;
-                    }
-                }
-                /*
-                 * We *ignore* any unknown pragma.
-                 */
-                continue;
-            } else if (strncmp(pname, ".include", 8) == 0
+            if (strncmp(pname, ".include", 8) == 0
                 && (p != pname + 8 || *p == '=')) {
                 char *include = NULL;
                 BIO *next;
@@ -456,7 +408,6 @@ static int def_load_bio(CONF *conf, BIO *in, long *line)
                 continue;
             } else if (*p != '=') {
                 CONFerr(CONF_F_DEF_LOAD_BIO, CONF_R_MISSING_EQUAL_SIGN);
-                ERR_add_error_data(2, "HERE-->", p);
                 goto err;
             }
             *end = '\0';
@@ -633,10 +584,7 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from)
             buf->data[to++] = v;
         } else if (IS_EOF(conf, *from))
             break;
-        else if (*from == '$'
-                 && (!conf->flag_dollarid
-                     || from[1] == '{'
-                     || from[1] == '(')) {
+        else if (*from == '$') {
             size_t newsize;
 
             /* try to expand it */
@@ -653,8 +601,7 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from)
                 s++;
             cp = section;
             e = np = s;
-            while (IS_ALNUM(conf, *e)
-                   || (conf->flag_dollarid && IS_DOLLAR(conf, *e)))
+            while (IS_ALNUM(conf, *e))
                 e++;
             if ((e[0] == ':') && (e[1] == ':')) {
                 cp = np;
@@ -663,8 +610,7 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from)
                 *rrp = '\0';
                 e += 2;
                 np = e;
-                while (IS_ALNUM(conf, *e)
-                       || (conf->flag_dollarid && IS_DOLLAR(conf, *e)))
+                while (IS_ALNUM(conf, *e))
                     e++;
             }
             r = *e;
@@ -777,9 +723,7 @@ static BIO *process_include(char *include, OPENSSL_DIR_CTX **dirctx,
 static BIO *get_next_file(const char *path, OPENSSL_DIR_CTX **dirctx)
 {
     const char *filename;
-    size_t pathlen;
 
-    pathlen = strlen(path);
     while ((filename = OPENSSL_DIR_read(dirctx, path)) != NULL) {
         size_t namelen;
 
@@ -792,7 +736,7 @@ static BIO *get_next_file(const char *path, OPENSSL_DIR_CTX **dirctx)
             char *newpath;
             BIO *bio;
 
-            newlen = pathlen + namelen + 2;
+            newlen = strlen(path) + namelen + 2;
             newpath = OPENSSL_zalloc(newlen);
             if (newpath == NULL) {
                 CONFerr(CONF_F_GET_NEXT_FILE, ERR_R_MALLOC_FAILURE);
@@ -803,11 +747,14 @@ static BIO *get_next_file(const char *path, OPENSSL_DIR_CTX **dirctx)
              * If the given path isn't clear VMS syntax,
              * we treat it as on Unix.
              */
-            if (path[pathlen - 1] == ']'
-                || path[pathlen - 1] == '>'
-                || path[pathlen - 1] == ':') {
-                /* Clear VMS directory syntax, just copy as is */
-                OPENSSL_strlcpy(newpath, path, newlen);
+            {
+                size_t pathlen = strlen(path);
+
+                if (path[pathlen - 1] == ']' || path[pathlen - 1] == '>'
+                    || path[pathlen - 1] == ':') {
+                    /* Clear VMS directory syntax, just copy as is */
+                    OPENSSL_strlcpy(newpath, path, newlen);
+                }
             }
 #endif
             if (newpath[0] == '\0') {
@@ -880,8 +827,7 @@ static char *eat_alpha_numeric(CONF *conf, char *p)
             p = scan_esc(conf, p);
             continue;
         }
-        if (!(IS_ALNUM_PUNCT(conf, *p)
-              || (conf->flag_dollarid && IS_DOLLAR(conf, *p))))
+        if (!IS_ALNUM_PUNCT(conf, *p))
             return p;
         p++;
     }

@@ -52,24 +52,11 @@ STACK_OF(CONF_VALUE) *i2v_GENERAL_NAMES(X509V3_EXT_METHOD *method,
 {
     int i;
     GENERAL_NAME *gen;
-    STACK_OF(CONF_VALUE) *tmpret = NULL, *origret = ret;
-
     for (i = 0; i < sk_GENERAL_NAME_num(gens); i++) {
         gen = sk_GENERAL_NAME_value(gens, i);
-        /*
-         * i2v_GENERAL_NAME allocates ret if it is NULL. If something goes
-         * wrong we need to free the stack - but only if it was empty when we
-         * originally entered this function.
-         */
-        tmpret = i2v_GENERAL_NAME(method, gen, ret);
-        if (tmpret == NULL) {
-            if (origret == NULL)
-                sk_CONF_VALUE_pop_free(ret, X509V3_conf_free);
-            return NULL;
-        }
-        ret = tmpret;
+        ret = i2v_GENERAL_NAME(method, gen, ret);
     }
-    if (ret == NULL)
+    if (!ret)
         return sk_CONF_VALUE_new_null();
     return ret;
 }
@@ -86,38 +73,19 @@ STACK_OF(CONF_VALUE) *i2v_GENERAL_NAME(X509V3_EXT_METHOD *method,
     case GEN_OTHERNAME:
         switch (OBJ_obj2nid(gen->d.otherName->type_id)) {
         case NID_id_on_SmtpUTF8Mailbox:
-            if (gen->d.otherName->value->type != V_ASN1_UTF8STRING
-                    || !X509V3_add_value_uchar("othername: SmtpUTF8Mailbox:",
-                            gen->d.otherName->value->value.utf8string->data,
-                            &ret))
+            if (!X509V3_add_value_uchar("othername: SmtpUTF8Mailbox:", gen->d.otherName->value->value.utf8string->data, &ret))
                 return NULL;
             break;
         case NID_XmppAddr:
-            if (gen->d.otherName->value->type != V_ASN1_UTF8STRING
-                    || !X509V3_add_value_uchar("othername: XmppAddr:",
-                            gen->d.otherName->value->value.utf8string->data,
-                            &ret))
+            if (!X509V3_add_value_uchar("othername: XmppAddr:", gen->d.otherName->value->value.utf8string->data, &ret))
                 return NULL;
             break;
         case NID_SRVName:
-            if (gen->d.otherName->value->type != V_ASN1_IA5STRING
-                    || !X509V3_add_value_uchar("othername: SRVName:",
-                            gen->d.otherName->value->value.ia5string->data,
-                            &ret))
+            if (!X509V3_add_value_uchar("othername: SRVName:", gen->d.otherName->value->value.ia5string->data, &ret))
                 return NULL;
             break;
         case NID_ms_upn:
-            if (gen->d.otherName->value->type != V_ASN1_UTF8STRING
-                    || !X509V3_add_value_uchar("othername: UPN:",
-                            gen->d.otherName->value->value.utf8string->data,
-                            &ret))
-                return NULL;
-            break;
-        case NID_NAIRealm:
-            if (gen->d.otherName->value->type != V_ASN1_UTF8STRING
-                    || !X509V3_add_value_uchar("othername: NAIRealm:",
-                            gen->d.otherName->value->value.utf8string->data,
-                            &ret))
+            if (!X509V3_add_value_uchar("othername: UPN:", gen->d.otherName->value->value.utf8string->data, &ret))
                 return NULL;
             break;
         default:
@@ -193,40 +161,21 @@ STACK_OF(CONF_VALUE) *i2v_GENERAL_NAME(X509V3_EXT_METHOD *method,
 int GENERAL_NAME_print(BIO *out, GENERAL_NAME *gen)
 {
     unsigned char *p;
-    int i, nid;
-
+    int i;
     switch (gen->type) {
     case GEN_OTHERNAME:
-        nid = OBJ_obj2nid(gen->d.otherName->type_id);
-        /* Validate the types are as we expect before we use them */
-        if ((nid == NID_SRVName
-             && gen->d.otherName->value->type != V_ASN1_IA5STRING)
-                || (nid != NID_SRVName
-                    && gen->d.otherName->value->type != V_ASN1_UTF8STRING)) {
-            BIO_printf(out, "othername:<unsupported>");
-            break;
-        }
-
-        switch (nid) {
+        switch (OBJ_obj2nid(gen->d.otherName->type_id)) {
         case NID_id_on_SmtpUTF8Mailbox:
-            BIO_printf(out, "othername:SmtpUTF8Mailbox:%s",
-                       gen->d.otherName->value->value.utf8string->data);
+            BIO_printf(out, "othername:SmtpUTF8Mailbox:%s", gen->d.otherName->value->value.utf8string->data);
             break;
         case NID_XmppAddr:
-            BIO_printf(out, "othername:XmppAddr:%s",
-                       gen->d.otherName->value->value.utf8string->data);
+            BIO_printf(out, "othername:XmppAddr:%s", gen->d.otherName->value->value.utf8string->data);
             break;
         case NID_SRVName:
-            BIO_printf(out, "othername:SRVName:%s",
-                       gen->d.otherName->value->value.ia5string->data);
+            BIO_printf(out, "othername:SRVName:%s", gen->d.otherName->value->value.ia5string->data);
             break;
         case NID_ms_upn:
-            BIO_printf(out, "othername:UPN:%s",
-                       gen->d.otherName->value->value.utf8string->data);
-            break;
-        case NID_NAIRealm:
-            BIO_printf(out, "othername:NAIRealm:%s",
-                       gen->d.otherName->value->value.utf8string->data);
+            BIO_printf(out, "othername:UPN:%s", gen->d.otherName->value->value.utf8string->data);
             break;
         default:
             BIO_printf(out, "othername:<unsupported>");
@@ -303,7 +252,7 @@ static GENERAL_NAMES *v2i_issuer_alt(X509V3_EXT_METHOD *method,
     for (i = 0; i < num; i++) {
         CONF_VALUE *cnf = sk_CONF_VALUE_value(nval, i);
 
-        if (!v3_name_cmp(cnf->name, "issuer")
+        if (!name_cmp(cnf->name, "issuer")
             && cnf->value && strcmp(cnf->value, "copy") == 0) {
             if (!copy_issuer(ctx, gens))
                 goto err;
@@ -382,11 +331,11 @@ static GENERAL_NAMES *v2i_subject_alt(X509V3_EXT_METHOD *method,
 
     for (i = 0; i < num; i++) {
         cnf = sk_CONF_VALUE_value(nval, i);
-        if (!v3_name_cmp(cnf->name, "email")
+        if (!name_cmp(cnf->name, "email")
             && cnf->value && strcmp(cnf->value, "copy") == 0) {
             if (!copy_email(ctx, gens, 0))
                 goto err;
-        } else if (!v3_name_cmp(cnf->name, "email")
+        } else if (!name_cmp(cnf->name, "email")
                    && cnf->value && strcmp(cnf->value, "move") == 0) {
             if (!copy_email(ctx, gens, 1))
                 goto err;
@@ -602,19 +551,19 @@ GENERAL_NAME *v2i_GENERAL_NAME_ex(GENERAL_NAME *out,
         return NULL;
     }
 
-    if (!v3_name_cmp(name, "email"))
+    if (!name_cmp(name, "email"))
         type = GEN_EMAIL;
-    else if (!v3_name_cmp(name, "URI"))
+    else if (!name_cmp(name, "URI"))
         type = GEN_URI;
-    else if (!v3_name_cmp(name, "DNS"))
+    else if (!name_cmp(name, "DNS"))
         type = GEN_DNS;
-    else if (!v3_name_cmp(name, "RID"))
+    else if (!name_cmp(name, "RID"))
         type = GEN_RID;
-    else if (!v3_name_cmp(name, "IP"))
+    else if (!name_cmp(name, "IP"))
         type = GEN_IPADD;
-    else if (!v3_name_cmp(name, "dirName"))
+    else if (!name_cmp(name, "dirName"))
         type = GEN_DIRNAME;
-    else if (!v3_name_cmp(name, "otherName"))
+    else if (!name_cmp(name, "otherName"))
         type = GEN_OTHERNAME;
     else {
         X509V3err(X509V3_F_V2I_GENERAL_NAME_EX, X509V3_R_UNSUPPORTED_OPTION);

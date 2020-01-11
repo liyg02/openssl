@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_ECERR_H
-# define OPENSSL_ECERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_ECERR_H
-# endif
+#ifndef HEADER_ECERR_H
+# define HEADER_ECERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -33,7 +27,7 @@ int ERR_load_EC_strings(void);
 /*
  * EC function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #   define EC_F_BN_TO_FELEM                                 0
 #   define EC_F_D2I_ECPARAMETERS                            0
 #   define EC_F_D2I_ECPKPARAMETERS                          0

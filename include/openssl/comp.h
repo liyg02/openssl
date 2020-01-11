@@ -7,14 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_COMP_H
-# define OPENSSL_COMP_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_COMP_H
-# endif
+#ifndef HEADER_COMP_H
+# define HEADER_COMP_H
 
 # include <openssl/opensslconf.h>
 
@@ -41,11 +35,11 @@ int COMP_expand_block(COMP_CTX *ctx, unsigned char *out, int olen,
 
 COMP_METHOD *COMP_zlib(void);
 
-#ifndef OPENSSL_NO_DEPRECATED_1_1_0
-# define COMP_zlib_cleanup() while(0) continue
+#if !OPENSSL_API_1_1_0
+#define COMP_zlib_cleanup() while(0) continue
 #endif
 
-# ifdef OPENSSL_BIO_H
+# ifdef HEADER_BIO_H
 #  ifdef ZLIB
 const BIO_METHOD *BIO_f_zlib(void);
 #  endif

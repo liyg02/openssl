@@ -15,7 +15,7 @@
 #include <openssl/crypto.h>
 #include <openssl/buffer.h>
 #include <openssl/err.h>
-#include "err_local.h"
+#include "err_locl.h"
 
 void ERR_print_errors_cb(int (*cb) (const char *str, size_t len, void *u),
                          void *u)
@@ -36,8 +36,7 @@ void ERR_print_errors_cb(int (*cb) (const char *str, size_t len, void *u),
             data = "";
         hex = OPENSSL_buf2hexstr((const unsigned char *)&tid, sizeof(tid));
         BIO_snprintf(buf, sizeof(buf), "%s:error:%s:%s:%s:%s:%d:%s\n",
-                     hex == NULL ? "<null>" : hex, lib, func, reason, file,
-                     line, data);
+                     hex, lib, func, reason, file, line, data);
         OPENSSL_free(hex);
         if (cb(buf, strlen(buf), u) <= 0)
             break;              /* abort outputting the error report */

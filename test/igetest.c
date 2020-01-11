@@ -7,9 +7,6 @@
  * https://www.openssl.org/source/license.html
  */
 
-/* The AES_ige_* functions are deprecated, so we suppress warnings about them */
-#define OPENSSL_SUPPRESS_DEPRECATED
-
 #include <openssl/crypto.h>
 #include <openssl/aes.h>
 #include <openssl/rand.h>
@@ -18,7 +15,7 @@
 #include "internal/nelem.h"
 #include "testutil.h"
 
-#ifndef OPENSSL_NO_DEPRECATED_3_0
+#if !OPENSSL_API_3
 
 # define TEST_SIZE       128
 # define BIG_TEST_SIZE 10240
@@ -441,7 +438,7 @@ static int test_bi_ige_garble3(void)
 
 int setup_tests(void)
 {
-#ifndef OPENSSL_NO_DEPRECATED_3_0
+#if !OPENSSL_API_3
     RAND_bytes(rkey, sizeof(rkey));
     RAND_bytes(rkey2, sizeof(rkey2));
     RAND_bytes(plaintext, sizeof(plaintext));

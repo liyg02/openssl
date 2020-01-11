@@ -9,14 +9,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_TLS1_H
-# define OPENSSL_TLS1_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_TLS1_H
-# endif
+#ifndef HEADER_TLS1_H
+# define HEADER_TLS1_H
 
 # include <openssl/buffer.h>
 # include <openssl/x509.h>
@@ -34,7 +28,7 @@ extern "C" {
 # define TLS1_1_VERSION                  0x0302
 # define TLS1_2_VERSION                  0x0303
 # define TLS1_3_VERSION                  0x0304
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define TLS_MAX_VERSION                TLS1_3_VERSION
 # endif
 

@@ -11,8 +11,12 @@ use Getopt::Std;
 our($opt_n);
 getopts('n');
 
-# The year the output file is generated.
-my $YEAR = [localtime()]->[5] + 1900;
+# Output year depends on the year of the script and the input file.
+my $YEAR = [localtime([stat($0)]->[9])]->[5] + 1900;
+my $iYEAR = [localtime([stat($ARGV[0])]->[9])]->[5] + 1900;
+$YEAR = $iYEAR if $iYEAR > $YEAR;
+$iYEAR = [localtime([stat($ARGV[1])]->[9])]->[5] + 1900;
+$YEAR = $iYEAR if $iYEAR > $YEAR;
 
 open (NUMIN,"$ARGV[1]") || die "Can't open number file $ARGV[1]";
 $max_nid=0;

@@ -12,11 +12,11 @@
 #include "e_os.h"
 #include "internal/cryptlib.h"
 #include <stdio.h>
-#include "crypto/ctype.h"
+#include "internal/ctype.h"
 #include <openssl/conf.h>
 #include <openssl/crypto.h>
 #include <openssl/x509v3.h>
-#include "crypto/x509.h"
+#include "internal/x509_int.h"
 #include <openssl/bn.h>
 #include "ext_dat.h"
 
@@ -380,14 +380,14 @@ static char *strip_spaces(char *name)
     p = name;
     while (*p && ossl_isspace(*p))
         p++;
-    if (*p == '\0')
+    if (!*p)
         return NULL;
     q = p + strlen(p) - 1;
     while ((q != p) && ossl_isspace(*q))
         q--;
     if (p != q)
         q[1] = 0;
-    if (*p == '\0')
+    if (!*p)
         return NULL;
     return p;
 }
@@ -397,7 +397,7 @@ static char *strip_spaces(char *name)
  * V2I name comparison function: returns zero if 'name' matches cmp or cmp.*
  */
 
-int v3_name_cmp(const char *name, const char *cmp)
+int name_cmp(const char *name, const char *cmp)
 {
     int len, ret;
     char c;
@@ -989,12 +989,11 @@ ASN1_OCTET_STRING *a2i_IPADDRESS_NC(const char *ipasc)
     unsigned char ipout[32];
     char *iptmp = NULL, *p;
     int iplen1, iplen2;
-
     p = strchr(ipasc, '/');
-    if (p == NULL)
+    if (!p)
         return NULL;
     iptmp = OPENSSL_strdup(ipasc);
-    if (iptmp == NULL)
+    if (!iptmp)
         return NULL;
     p = iptmp + (p - ipasc);
     *p++ = 0;

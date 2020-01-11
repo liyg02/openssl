@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_CRYPTO_H
-# define OPENSSL_CRYPTO_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_CRYPTO_H
-# endif
+#ifndef HEADER_CRYPTO_H
+# define HEADER_CRYPTO_H
 
 # include <stdlib.h>
 # include <time.h>
@@ -28,7 +22,7 @@
 
 # include <openssl/safestack.h>
 # include <openssl/opensslv.h>
-# include <openssl/types.h>
+# include <openssl/ossl_typ.h>
 # include <openssl/opensslconf.h>
 # include <openssl/cryptoerr.h>
 
@@ -42,7 +36,7 @@
  */
 # include <openssl/symhacks.h>
 
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 #  include <openssl/opensslv.h>
 # endif
 
@@ -50,7 +44,7 @@
 extern "C" {
 #endif
 
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 #  define SSLeay                  OpenSSL_version_num
 #  define SSLeay_version          OpenSSL_version
 #  define SSLEAY_VERSION_NUMBER   OPENSSL_VERSION_NUMBER
@@ -68,7 +62,7 @@ typedef struct {
     int dummy;
 } CRYPTO_dynlock;
 
-# endif /* OPENSSL_NO_DEPRECATED_1_1_0 */
+# endif /* OPENSSL_API_1_1_0 */
 
 typedef void CRYPTO_RWLOCK;
 
@@ -113,13 +107,14 @@ DEFINE_STACK_OF(void)
 # define CRYPTO_EX_INDEX_BIO             12
 # define CRYPTO_EX_INDEX_APP             13
 # define CRYPTO_EX_INDEX_UI_METHOD       14
-# define CRYPTO_EX_INDEX_RAND_DRBG       15
-# define CRYPTO_EX_INDEX_DRBG            CRYPTO_EX_INDEX_RAND_DRBG
+# define CRYPTO_EX_INDEX_DRBG            15
 # define CRYPTO_EX_INDEX_OPENSSL_CTX     16
 # define CRYPTO_EX_INDEX__COUNT          17
 
 /* No longer needed, so this is a no-op */
 #define OPENSSL_malloc_init() while(0) continue
+
+int CRYPTO_mem_ctrl(int mode);
 
 # define OPENSSL_malloc(num) \
         CRYPTO_malloc(num, OPENSSL_FILE, OPENSSL_LINE)
@@ -162,17 +157,6 @@ unsigned char *OPENSSL_hexstr2buf(const char *str, long *buflen);
 int OPENSSL_hexchar2int(unsigned char c);
 
 # define OPENSSL_MALLOC_MAX_NELEMS(type)  (((1U<<(sizeof(int)*8-1))-1)/sizeof(type))
-
-/*
- * These functions return the values of OPENSSL_VERSION_MAJOR,
- * OPENSSL_VERSION_MINOR, OPENSSL_VERSION_PATCH, OPENSSL_VERSION_PRE_RELEASE
- * and OPENSSL_VERSION_BUILD_METADATA, respectively.
- */
-unsigned int OPENSSL_version_major(void);
-unsigned int OPENSSL_version_minor(void);
-unsigned int OPENSSL_version_patch(void);
-const char *OPENSSL_version_pre_release(void);
-const char *OPENSSL_version_build_metadata(void);
 
 unsigned long OpenSSL_version_num(void);
 const char *OpenSSL_version(int type);
@@ -236,7 +220,7 @@ int CRYPTO_alloc_ex_data(int class_index, void *obj, CRYPTO_EX_DATA *ad,
 int CRYPTO_set_ex_data(CRYPTO_EX_DATA *ad, int idx, void *val);
 void *CRYPTO_get_ex_data(const CRYPTO_EX_DATA *ad, int idx);
 
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 /*
  * This function cleans up all "ex_data" state. It mustn't be called under
  * potential race-conditions.
@@ -283,11 +267,11 @@ typedef struct crypto_threadid_st {
 #  define CRYPTO_THREADID_cpy(dest, src)
 #  define CRYPTO_THREADID_hash(id)                      (0UL)
 
-#  ifndef OPENSSL_NO_DEPRECATED_1_0_0
+#  if !OPENSSL_API_1_0_0
 #   define CRYPTO_set_id_callback(func)
 #   define CRYPTO_get_id_callback()                     (NULL)
 #   define CRYPTO_thread_id()                           (0UL)
-#  endif /* OPENSSL_NO_DEPRECATED_1_0_0 */
+#  endif /* OPENSSL_API_1_0_0 */
 
 #  define CRYPTO_set_dynlock_create_callback(dyn_create_function)
 #  define CRYPTO_set_dynlock_lock_callback(dyn_lock_function)
@@ -295,12 +279,13 @@ typedef struct crypto_threadid_st {
 #  define CRYPTO_get_dynlock_create_callback()          (NULL)
 #  define CRYPTO_get_dynlock_lock_callback()            (NULL)
 #  define CRYPTO_get_dynlock_destroy_callback()         (NULL)
-# endif /* OPENSSL_NO_DEPRECATED_1_1_0 */
+# endif /* OPENSSL_API_1_1_0 */
 
 int CRYPTO_set_mem_functions(
         void *(*m) (size_t, const char *, int),
         void *(*r) (void *, size_t, const char *, int),
         void (*f) (void *, const char *, int));
+int CRYPTO_set_mem_debug(int flag);
 void CRYPTO_get_mem_functions(
         void *(**m) (size_t, const char *, int),
         void *(**r) (void *, size_t, const char *, int),
@@ -332,39 +317,42 @@ size_t CRYPTO_secure_used(void);
 void OPENSSL_cleanse(void *ptr, size_t len);
 
 # ifndef OPENSSL_NO_CRYPTO_MDEBUG
-void CRYPTO_get_alloc_counts(int *mcount, int *rcount, int *fcount);
-#  ifndef OPENSSL_NO_DEPRECATED_3_0
+#  if !OPENSSL_API_3
 #    define OPENSSL_mem_debug_push(info) \
          CRYPTO_mem_debug_push(info, OPENSSL_FILE, OPENSSL_LINE)
 #    define OPENSSL_mem_debug_pop() \
          CRYPTO_mem_debug_pop()
 #  endif
-DEPRECATEDIN_3_0(int CRYPTO_set_mem_debug(int flag))
-DEPRECATEDIN_3_0(int CRYPTO_mem_ctrl(int mode))
-DEPRECATEDIN_3_0(int CRYPTO_mem_debug_push(const char *info,
-                                           const char *file, int line))
-DEPRECATEDIN_3_0(int CRYPTO_mem_debug_pop(void))
+DEPRECATEDIN_3(int CRYPTO_mem_debug_push(const char *info,
+                                         const char *file, int line))
+DEPRECATEDIN_3(int CRYPTO_mem_debug_pop(void))
 
-DEPRECATEDIN_3_0(void CRYPTO_mem_debug_malloc(void *addr, size_t num,
-                                              int flag,
-                                              const char *file, int line))
-DEPRECATEDIN_3_0(void CRYPTO_mem_debug_realloc(void *addr1, void *addr2,
-                                               size_t num, int flag,
-                                               const char *file, int line))
-DEPRECATEDIN_3_0(void CRYPTO_mem_debug_free(void *addr, int flag,
-                                            const char *file, int line))
+void CRYPTO_get_alloc_counts(int *mcount, int *rcount, int *fcount);
 
-DEPRECATEDIN_3_0(int CRYPTO_mem_leaks_cb(
-                      int (*cb)(const char *str, size_t len, void *u), void *u))
+/*-
+ * Debugging functions (enabled by CRYPTO_set_mem_debug(1))
+ * The flag argument has the following significance:
+ *   0:   called before the actual memory allocation has taken place
+ *   1:   called after the actual memory allocation has taken place
+ */
+void CRYPTO_mem_debug_malloc(void *addr, size_t num, int flag,
+        const char *file, int line);
+void CRYPTO_mem_debug_realloc(void *addr1, void *addr2, size_t num, int flag,
+        const char *file, int line);
+void CRYPTO_mem_debug_free(void *addr, int flag,
+        const char *file, int line);
+
+int CRYPTO_mem_leaks_cb(int (*cb) (const char *str, size_t len, void *u),
+                        void *u);
 #  ifndef OPENSSL_NO_STDIO
-DEPRECATEDIN_3_0(int CRYPTO_mem_leaks_fp(FILE *))
+int CRYPTO_mem_leaks_fp(FILE *);
 #  endif
-DEPRECATEDIN_3_0(int CRYPTO_mem_leaks(BIO *bio))
+int CRYPTO_mem_leaks(BIO *bio);
 # endif
 
 /* die if we have to */
 ossl_noreturn void OPENSSL_die(const char *assertion, const char *file, int line);
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 #  define OpenSSLDie(f,l,a) OPENSSL_die((a),(f),(l))
 # endif
 # define OPENSSL_assert(e) \

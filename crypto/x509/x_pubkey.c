@@ -11,9 +11,9 @@
 #include "internal/cryptlib.h"
 #include <openssl/asn1t.h>
 #include <openssl/x509.h>
-#include "crypto/asn1.h"
-#include "crypto/evp.h"
-#include "crypto/x509.h"
+#include "internal/asn1_int.h"
+#include "internal/evp_int.h"
+#include "internal/x509_int.h"
 #include <openssl/rsa.h>
 #include <openssl/dsa.h>
 
@@ -185,17 +185,16 @@ EVP_PKEY *d2i_PUBKEY(EVP_PKEY **a, const unsigned char **pp, long length)
     X509_PUBKEY *xpk;
     EVP_PKEY *pktmp;
     const unsigned char *q;
-
     q = *pp;
     xpk = d2i_X509_PUBKEY(NULL, &q, length);
-    if (xpk == NULL)
+    if (!xpk)
         return NULL;
     pktmp = X509_PUBKEY_get(xpk);
     X509_PUBKEY_free(xpk);
-    if (pktmp == NULL)
+    if (!pktmp)
         return NULL;
     *pp = q;
-    if (a != NULL) {
+    if (a) {
         EVP_PKEY_free(*a);
         *a = pktmp;
     }
@@ -231,17 +230,16 @@ RSA *d2i_RSA_PUBKEY(RSA **a, const unsigned char **pp, long length)
     EVP_PKEY *pkey;
     RSA *key;
     const unsigned char *q;
-
     q = *pp;
     pkey = d2i_PUBKEY(NULL, &q, length);
-    if (pkey == NULL)
+    if (!pkey)
         return NULL;
     key = EVP_PKEY_get1_RSA(pkey);
     EVP_PKEY_free(pkey);
-    if (key == NULL)
+    if (!key)
         return NULL;
     *pp = q;
-    if (a != NULL) {
+    if (a) {
         RSA_free(*a);
         *a = key;
     }
@@ -273,17 +271,16 @@ DSA *d2i_DSA_PUBKEY(DSA **a, const unsigned char **pp, long length)
     EVP_PKEY *pkey;
     DSA *key;
     const unsigned char *q;
-
     q = *pp;
     pkey = d2i_PUBKEY(NULL, &q, length);
-    if (pkey == NULL)
+    if (!pkey)
         return NULL;
     key = EVP_PKEY_get1_DSA(pkey);
     EVP_PKEY_free(pkey);
-    if (key == NULL)
+    if (!key)
         return NULL;
     *pp = q;
-    if (a != NULL) {
+    if (a) {
         DSA_free(*a);
         *a = key;
     }
@@ -315,17 +312,16 @@ EC_KEY *d2i_EC_PUBKEY(EC_KEY **a, const unsigned char **pp, long length)
     EVP_PKEY *pkey;
     EC_KEY *key;
     const unsigned char *q;
-
     q = *pp;
     pkey = d2i_PUBKEY(NULL, &q, length);
-    if (pkey == NULL)
+    if (!pkey)
         return NULL;
     key = EVP_PKEY_get1_EC_KEY(pkey);
     EVP_PKEY_free(pkey);
-    if (key == NULL)
+    if (!key)
         return NULL;
     *pp = q;
-    if (a != NULL) {
+    if (a) {
         EC_KEY_free(*a);
         *a = key;
     }
@@ -336,8 +332,7 @@ int i2d_EC_PUBKEY(const EC_KEY *a, unsigned char **pp)
 {
     EVP_PKEY *pktmp;
     int ret;
-
-    if (a == NULL)
+    if (!a)
         return 0;
     if ((pktmp = EVP_PKEY_new()) == NULL) {
         ASN1err(ASN1_F_I2D_EC_PUBKEY, ERR_R_MALLOC_FAILURE);

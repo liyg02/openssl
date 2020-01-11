@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_RSAERR_H
-# define OPENSSL_RSAERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_RSAERR_H
-# endif
+#ifndef HEADER_RSAERR_H
+# define HEADER_RSAERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -29,7 +23,7 @@ int ERR_load_RSA_strings(void);
 /*
  * RSA function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define RSA_F_CHECK_PADDING_MD                           0
 #  define RSA_F_ENCODE_PKCS1                               0
 #  define RSA_F_INT_RSA_VERIFY                             0

@@ -20,7 +20,6 @@ my $QUOTE       = 0x0040;
 my $DQUOTE      = 0x0400;
 my $COMMENT     = 0x0080;
 my $FCOMMENT    = 0x0800;
-my $DOLLAR      = 0x1000;
 my $EOF         = 0x0008;
 my @V_def;
 my @V_w32;
@@ -39,7 +38,6 @@ foreach (0 .. 127) {
     $v |= $ESC         if $c =~ /\\/;
     $v |= $QUOTE       if $c =~ /['`"]/;         # for emacs: "`'
     $v |= $COMMENT     if $c =~ /\#/;
-    $v |= $DOLLAR      if $c eq '$';
     $v |= $EOF         if $c =~ /\0/;
     push(@V_def, $v);
 
@@ -52,13 +50,13 @@ foreach (0 .. 127) {
     $v |= $WS          if $c =~ /[ \t\r\n]/;
     $v |= $DQUOTE      if $c =~ /["]/;           # for emacs: "
     $v |= $FCOMMENT    if $c =~ /;/;
-    $v |= $DOLLAR      if $c eq '$';
     $v |= $EOF         if $c =~ /\0/;
     push(@V_w32, $v);
 }
 
-# The year the output file is generated.
-my $YEAR = [localtime()]->[5] + 1900;
+# Output year depends on the year of the script.
+my $YEAR = [localtime([stat($0)]->[9])]->[5] + 1900;
+
 print <<"EOF";
 /*
  * WARNING: do not edit!
@@ -82,7 +80,6 @@ print <<"EOF";
 #define CONF_DQUOTE       $DQUOTE
 #define CONF_COMMENT      $COMMENT
 #define CONF_FCOMMENT     $FCOMMENT
-#define CONF_DOLLAR       $DOLLAR
 #define CONF_EOF          $EOF
 #define CONF_ALPHA        (CONF_UPPER|CONF_LOWER)
 #define CONF_ALNUM        (CONF_ALPHA|CONF_NUMBER|CONF_UNDER)
@@ -99,7 +96,6 @@ print <<"EOF";
 #define IS_ALNUM_PUNCT(conf,c) is_keytype(conf, c, CONF_ALNUM_PUNCT)
 #define IS_QUOTE(conf,c)       is_keytype(conf, c, CONF_QUOTE)
 #define IS_DQUOTE(conf,c)      is_keytype(conf, c, CONF_DQUOTE)
-#define IS_DOLLAR(conf,c)      is_keytype(conf, c, CONF_DOLLAR)
 
 EOF
 
@@ -112,11 +108,9 @@ for ($i = 0; $i < 128; $i++) {
 }
 print "\n};\n\n";
 
-print "#ifndef OPENSSL_NO_DEPRECATED_3_0\n";
 print "static const unsigned short CONF_type_win32[128] = {";
 for ($i = 0; $i < 128; $i++) {
     print "\n   " if ($i % 8) == 0;
     printf " 0x%04X,", $V_w32[$i];
 }
 print "\n};\n";
-print "#endif\n";

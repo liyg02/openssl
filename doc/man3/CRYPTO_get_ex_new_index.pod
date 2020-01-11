@@ -44,12 +44,13 @@ Several OpenSSL structures can have application-specific data attached to them,
 known as "exdata."
 The specific structures are:
 
+    APP
     BIO
     DH
+    DRBG
     DSA
     EC_KEY
     ENGINE
-    RAND_DRBG
     RSA
     SSL
     SSL_CTX
@@ -59,8 +60,6 @@ The specific structures are:
     X509
     X509_STORE
     X509_STORE_CTX
-
-In addition, the B<APP> name is reserved for use by application code.
 
 Each is identified by an B<CRYPTO_EX_INDEX_xxx> define in the B<crypto.h>
 header file.  In addition, B<CRYPTO_EX_INDEX_APP> is reserved for

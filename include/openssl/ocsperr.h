@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_OCSPERR_H
-# define OPENSSL_OCSPERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_OCSPERR_H
-# endif
+#ifndef HEADER_OCSPERR_H
+# define HEADER_OCSPERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -33,7 +27,7 @@ int ERR_load_OCSP_strings(void);
 /*
  * OCSP function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #   define OCSP_F_D2I_OCSP_NONCE                            0
 #   define OCSP_F_OCSP_BASIC_ADD1_STATUS                    0
 #   define OCSP_F_OCSP_BASIC_SIGN                           0

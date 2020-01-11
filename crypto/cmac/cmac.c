@@ -199,8 +199,7 @@ int CMAC_Final(CMAC_CTX *ctx, unsigned char *out, size_t *poutlen)
         return 0;
     if ((bl = EVP_CIPHER_CTX_block_size(ctx->cctx)) < 0)
         return 0;
-    if (poutlen != NULL)
-        *poutlen = (size_t)bl;
+    *poutlen = (size_t)bl;
     if (!out)
         return 1;
     lb = ctx->nlast_block;

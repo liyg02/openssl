@@ -7,8 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OSSL_APPS_UI_H
-# define OSSL_APPS_UI_H
+#ifndef HEADER_APPS_UI_H
+# define HEADER_APPS_UI_H
 
 
 # define PW_MIN_LENGTH 4

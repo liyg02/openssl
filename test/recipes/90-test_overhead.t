@@ -12,6 +12,9 @@ use OpenSSL::Test::Utils;
 
 setup("test_overhead");
 
+plan skip_all => "Only supported in no-shared builds"
+    if !disabled("shared");
+
 plan tests => 1;
 
 ok(run(test(["cipher_overhead_test"])), "running cipher_overhead_test");

@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_BUFFERERR_H
-# define OPENSSL_BUFFERERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_BUFERR_H
-# endif
+#ifndef HEADER_BUFERR_H
+# define HEADER_BUFERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -29,7 +23,7 @@ int ERR_load_BUF_strings(void);
 /*
  * BUF function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define BUF_F_BUF_MEM_GROW                               0
 #  define BUF_F_BUF_MEM_GROW_CLEAN                         0
 #  define BUF_F_BUF_MEM_NEW                                0

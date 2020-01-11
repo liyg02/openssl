@@ -198,20 +198,19 @@ static CONF_MODULE *module_load_dso(const CONF *cnf,
     const char *path = NULL;
     int errcode = 0;
     CONF_MODULE *md;
-
     /* Look for alternative path in module section */
     path = NCONF_get_string(cnf, value, "path");
-    if (path == NULL) {
+    if (!path) {
         ERR_clear_error();
         path = name;
     }
     dso = DSO_load(NULL, path, NULL, 0);
-    if (dso == NULL) {
+    if (!dso) {
         errcode = CONF_R_ERROR_LOADING_DSO;
         goto err;
     }
     ifunc = (conf_init_func *)DSO_bind_func(dso, DSO_mod_init_name);
-    if (ifunc == NULL) {
+    if (!ifunc) {
         errcode = CONF_R_MISSING_INIT_FUNCTION;
         goto err;
     }
@@ -219,7 +218,7 @@ static CONF_MODULE *module_load_dso(const CONF *cnf,
     /* All OK, add module */
     md = module_add(dso, name, ifunc, ffunc);
 
-    if (md == NULL)
+    if (!md)
         goto err;
 
     return md;
@@ -534,7 +533,7 @@ int CONF_parse_list(const char *list_, int sep, int nospc,
                 lstart++;
         }
         p = strchr(lstart, sep);
-        if (p == lstart || *lstart == '\0')
+        if (p == lstart || !*lstart)
             ret = list_cb(NULL, 0, arg);
         else {
             if (p)

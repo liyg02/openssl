@@ -7,14 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_SYMHACKS_H
-# define OPENSSL_SYMHACKS_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_SYMHACKS_H
-# endif
+#ifndef HEADER_SYMHACKS_H
+# define HEADER_SYMHACKS_H
 
 # include <openssl/e_os2.h>
 

@@ -12,10 +12,10 @@
 #include <openssl/x509.h>
 #include <openssl/ec.h>
 #include <openssl/rand.h>
-#include "crypto/asn1.h"
-#include "crypto/evp.h"
-#include "ec_local.h"
-#include "curve448/curve448_local.h"
+#include "internal/asn1_int.h"
+#include "internal/evp_int.h"
+#include "ec_lcl.h"
+#include "curve448/curve448_lcl.h"
 
 #define X25519_BITS          253
 #define X25519_SECURITY_BITS 128
@@ -854,7 +854,6 @@ static const EVP_PKEY_METHOD ed448_pkey_meth = {
 
 #ifdef S390X_EC_ASM
 # include "s390x_arch.h"
-# include "internal/constant_time.h"
 
 static void s390x_x25519_mod_p(unsigned char u[32])
 {
@@ -868,16 +867,16 @@ static void s390x_x25519_mod_p(unsigned char u[32])
     u_red[31] = (unsigned char)c;
     c >>= 8;
 
-    for (i = 30; i >= 0; i--) {
+    for (i = 30; c > 0 && i >= 0; i--) {
         c += (unsigned int)u_red[i];
         u_red[i] = (unsigned char)c;
         c >>= 8;
     }
 
-    c = (u_red[0] & 0x80) >> 7;
-    u_red[0] &= 0x7f;
-    constant_time_cond_swap_buff(0 - (unsigned char)c,
-                                 u, u_red, sizeof(u_red));
+    if (u_red[0] & 0x80) {
+        u_red[0] &= 0x7f;
+        memcpy(u, u_red, sizeof(u_red));
+    }
 }
 
 static void s390x_x448_mod_p(unsigned char u[56])
@@ -902,14 +901,16 @@ static void s390x_x448_mod_p(unsigned char u[56])
     u_red[27] = (unsigned char)c;
     c >>= 8;
 
-    for (i = 26; i >= 0; i--) {
+    for (i = 26; c > 0 && i >= 0; i--) {
         c += (unsigned int)u_red[i];
         u_red[i] = (unsigned char)c;
         c >>= 8;
     }
 
-    constant_time_cond_swap_buff(0 - (unsigned char)c,
-                                 u, u_red, sizeof(u_red));
+    if (u_red[0] & 0x80) {
+        u_red[0] &= 0x7f;
+        memcpy(u, u_red, sizeof(u_red));
+    }
 }
 
 static int s390x_x25519_mul(unsigned char u_dst[32],
@@ -965,7 +966,7 @@ static int s390x_x448_mul(unsigned char u_dst[56],
     memcpy(param.x448.d_src, d_src, 56);
 
     s390x_flip_endian64(param.x448.u_src, param.x448.u_src);
-    s390x_x448_mod_p(param.x448.u_src + 8);
+    s390x_x448_mod_p(param.x448.u_src);
 
     s390x_flip_endian64(param.x448.d_src, param.x448.d_src);
     param.x448.d_src[63] &= 252;

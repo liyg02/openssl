@@ -7,8 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_PROVIDER_H
-# define OPENSSL_PROVIDER_H
+#ifndef OSSL_PROVIDER_H
+# define OSSL_PROVIDER_H
 
 # include <openssl/core.h>
 

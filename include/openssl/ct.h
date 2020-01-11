@@ -7,19 +7,13 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_CT_H
-# define OPENSSL_CT_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_CT_H
-# endif
+#ifndef HEADER_CT_H
+# define HEADER_CT_H
 
 # include <openssl/opensslconf.h>
 
 # ifndef OPENSSL_NO_CT
-# include <openssl/types.h>
+# include <openssl/ossl_typ.h>
 # include <openssl/safestack.h>
 # include <openssl/x509.h>
 # include <openssl/cterr.h>

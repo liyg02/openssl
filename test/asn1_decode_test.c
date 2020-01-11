@@ -28,7 +28,7 @@ static unsigned char t_invalid_zero[] = {
     0x02, 0x00                   /* INTEGER tag + length */
 };
 
-#ifndef OPENSSL_NO_DEPRECATED_3_0
+#if !OPENSSL_API_3
 /* LONG case ************************************************************* */
 
 typedef struct {
@@ -162,7 +162,7 @@ static int test_uint64(void)
 
 int setup_tests(void)
 {
-#ifndef OPENSSL_NO_DEPRECATED_3_0
+#if !OPENSSL_API_3
     ADD_TEST(test_long);
 #endif
     ADD_TEST(test_int32);

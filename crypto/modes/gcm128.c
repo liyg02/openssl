@@ -10,7 +10,7 @@
 #include <string.h>
 #include <openssl/crypto.h>
 #include "internal/cryptlib.h"
-#include "crypto/modes.h"
+#include "internal/modes_int.h"
 
 #if defined(BSWAP4) && defined(STRICT_ALIGNMENT)
 /* redefine, because alignment is ensured */

@@ -64,12 +64,12 @@ on different platforms.
 =item B<new> I<%options>
 
 Creates a new instance of the C<OpenSSL::Ordinals> class.  It takes options
-in keyed pair form, i.e. a series of C<< key => value >> pairs.  Available
+in keyed pair form, i.e. a series of C<key =E<gt> value> pairs.  Available
 options are:
 
 =over 4
 
-=item B<< from => FILENAME >>
+=item B<from =E<gt> FILENAME>
 
 Not only create a new instance, but immediately load it with data from the
 ordinals file FILENAME.
@@ -86,7 +86,6 @@ sub new {
         filename        => undef, # File name registered when loading
         loaded_maxnum   => 0,     # Highest allocated item number when loading
         loaded_contents => [],    # Loaded items, if loading there was
-        maxassigned     => 0,     # Current highest assigned item number
         maxnum          => 0,     # Current highest allocated item number
         contents        => [],    # Items, indexed by number
         name2num        => {},    # Name to number dictionary
@@ -102,7 +101,7 @@ sub new {
     return $instance;
 }
 
-=item B<< $ordinals->load FILENAME >>
+=item B<$ordinals-E<gt>load FILENAME>
 
 Loads the data from FILENAME into the instance.  Any previously loaded data
 is dropped.
@@ -122,7 +121,6 @@ sub load {
 
     my @tmp_contents = ();
     my %tmp_name2num = ();
-    my $max_assigned = 0;
     my $max_num = 0;
     open F, '<', $filename or croak "Unable to open $filename";
     while (<F>) {
@@ -133,27 +131,17 @@ sub load {
         my $item = OpenSSL::Ordinals::Item->new(from => $_);
 
         my $num = $item->number();
-        if ($num eq '?') {
-            $num = ++$max_num;
-        } elsif ($num eq '?+') {
-            $num = $max_num;
-        } else {
-            croak "Disordered ordinals, number sequence restarted"
-                if $max_num > $max_assigned && $num < $max_num;
-            croak "Disordered ordinals, $num < $max_num"
-                if $num < $max_num;
-            $max_assigned = $max_num = $num;
-        }
+        croak "Disordered ordinals, $num < $max_num"
+            if $num < $max_num;
+        $max_num = $num;
 
-        $item->intnum($num);
-        push @{$tmp_contents[$num]}, $item;
-        $tmp_name2num{$item->name()} = $num;
+        push @{$tmp_contents[$item->number()]}, $item;
+        $tmp_name2num{$item->name()} = $item->number();
     }
     close F;
 
     $self->{contents} = [ @tmp_contents ];
     $self->{name2num} = { %tmp_name2num };
-    $self->{maxassigned} = $max_assigned;
     $self->{maxnum} = $max_num;
     $self->{filename} = $filename;
 
@@ -169,26 +157,7 @@ sub load {
     return 1;
 }
 
-=item B<< $ordinals->renumber >>
-
-Renumber any item that doesn't have an assigned number yet.
-
-=cut
-
-sub renumber {
-    my $self = shift;
-
-    my $max_assigned = 0;
-    foreach ($self->items(by => by_number())) {
-        $_->number($_->intnum()) if $_->number() =~ m|^\?|;
-        if ($max_assigned < $_->number()) {
-            $max_assigned = $_->number();
-        }
-    }
-    $self->{maxassigned} = $max_assigned;
-}
-
-=item B<< $ordinals->rewrite >>
+=item B<$ordinals-E<gt>rewrite>
 
 If an ordinals file has been loaded, it gets rewritten with the data from
 the current work database.
@@ -201,10 +170,10 @@ sub rewrite {
     $self->write($self->{filename});
 }
 
-=item B<< $ordinals->write FILENAME >>
+=item B<$ordinals-E<gt>write FILENAME>
 
 Writes the current work database data to the ordinals file FILENAME.
-This also validates the data, see B<< $ordinals->validate >> below.
+This also validates the data, see B<$ordinals-E<gt>validate> below.
 
 =cut
 
@@ -226,23 +195,23 @@ sub write {
     return 1;
 }
 
-=item B<< $ordinals->items >> I<%options>
+=item B<$ordinals-E<gt>items> I<%options>
 
 Returns a list of items according to a set of criteria.  The criteria is
-given in form keyed pair form, i.e. a series of C<< key => value >> pairs.
+given in form keyed pair form, i.e. a series of C<key =E<gt> value> pairs.
 Available options are:
 
 =over 4
 
-=item B<< sort => SORTFUNCTION >>
+=item B<sort =E<gt> SORTFUNCTION>
 
 SORTFUNCTION is a reference to a function that takes two arguments, which
 correspond to the classic C<$a> and C<$b> that are available in a C<sort>
 block.
 
-=item B<< filter => FILTERFUNCTION >>
+=item B<filter =E<gt> FILTERFUNCTION>
 
-FILTERFUNCTION is a reference to a function that takes one argument, which
+FILTERFUNTION is a reference to a function that takes one argument, which
 is every OpenSSL::Ordinals::Item element available.
 
 =back
@@ -302,7 +271,7 @@ sub _putback {
         my %versions = ();
         my %features = ();
         foreach (@items) {
-            $numbers{$_->intnum()} = 1;
+            $numbers{$_->number()} = 1;
             $versions{$_->version()} = 1;
             foreach ($_->features()) {
                 $features{$_}++;
@@ -311,7 +280,7 @@ sub _putback {
 
         # Check that all items we're trying to put back have the same number
         croak "Items don't have the same numeral: ",
-            join(", ", map { $_->name()." => ".$_->intnum() } @items), "\n"
+            join(", ", map { $_->name()." => ".$_->number() } @items), "\n"
             if (scalar keys %numbers > 1);
         croak "Items don't have the same version: ",
             join(", ", map { $_->name()." => ".$_->version() } @items), "\n"
@@ -354,7 +323,7 @@ sub _putback {
                 $items[0]->name(), " and ", $items[1]->name(), "\n";
         }
     }
-    $self->{contents}->[$items[0]->intnum()] = [ @items ];
+    $self->{contents}->[$items[0]->number()] = [ @items ];
 }
 
 sub _parse_platforms {
@@ -410,7 +379,7 @@ sub _adjust_version {
     return $version;
 }
 
-=item B<< $ordinals->add NAME, TYPE, LIST >>
+=item B<$ordinals-E<gt>add NAME, TYPE, LIST>
 
 Adds a new item named NAME with the type TYPE, and a set of C macros in
 LIST that are expected to be defined or undefined to use this symbol, if
@@ -418,7 +387,9 @@ any.  For undefined macros, they each must be prefixed with a C<!>.
 
 If this symbol already exists in loaded data, it will be rewritten using
 the new input data, but will keep the same ordinal number and version.
-If it's entirely new, it will get a '?' and the current default version.
+If it's entirely new, it will get a new number and the current default
+version.  The new ordinal number is a simple increment from the last
+maximum number.
 
 =cut
 
@@ -440,8 +411,7 @@ sub add {
 
     my @items = $self->items(filter => f_name($name));
     my $version = @items ? $items[0]->version() : $self->{currversion};
-    my $intnum = @items ? $items[0]->intnum() : ++$self->{maxnum};
-    my $number = @items ? $items[0]->number() : '?';
+    my $number = @items ? $items[0]->number() : ++$self->{maxnum};
     print STDERR "DEBUG[",__PACKAGE__,":add] $verbsig\n",
         @items ? map { "\t".$_->to_string()."\n" } @items : "No previous items\n",
         if $self->{debug};
@@ -451,7 +421,6 @@ sub add {
         OpenSSL::Ordinals::Item->new( name          => $name,
                                       type          => $type,
                                       number        => $number,
-                                      intnum        => $intnum,
                                       version       =>
                                           $self->_adjust_version($version),
                                       exists        => 1,
@@ -476,7 +445,7 @@ sub add {
     return @returns;
 }
 
-=item B<< $ordinals->add_alias ALIAS, NAME, LIST >>
+=item B<$ordinals-E<gt>add_alias ALIAS, NAME, LIST>
 
 Adds an alias ALIAS for the symbol NAME, and a set of C macros in LIST
 that are expected to be defined or undefined to use this symbol, if any.
@@ -536,13 +505,10 @@ sub add_alias {
         # We supposedly do now know how to do this...  *ahem*
         $items[0]->{platforms} = { %alias_platforms };
 
-        my $number =
-            $items[0]->number() =~ m|^\?| ? '?+' : $items[0]->number();
         my $alias_item = OpenSSL::Ordinals::Item->new(
             name          => $alias,
             type          => $items[0]->type(),
-            number        => $number,
-            intnum        => $items[0]->intnum(),
+            number        => $items[0]->number(),
             version       => $self->_adjust_version($items[0]->version()),
             exists        => $items[0]->exists(),
             platforms     => { %platforms },
@@ -562,9 +528,9 @@ sub add_alias {
         "\t", join(", ", map { $_->name() } @items), "\n";
 }
 
-=item B<< $ordinals->set_version VERSION >>
+=item B<$ordinals-E<gt>set_version VERSION>
 
-=item B<< $ordinals->set_version VERSION BASEVERSION >>
+=item B<$ordinals-E<gt>set_version VERSION BASEVERSION>
 
 Sets the default version for new symbol to VERSION.
 
@@ -625,7 +591,7 @@ sub set_version {
     return 1;
 }
 
-=item B<< $ordinals->invalidate >>
+=item B<$ordinals-E<gt>invalidate>
 
 Invalidates the whole working database.  The practical effect is that all
 symbols are set to not exist, but are kept around in the database to retain
@@ -644,11 +610,11 @@ sub invalidate {
     $self->{stats} = {};
 }
 
-=item B<< $ordinals->validate >>
+=item B<$ordinals-E<gt>validate>
 
 Validates the current working database by collection statistics on how many
 symbols were added and how many were changed.  These numbers can be retrieved
-with B<< $ordinals->stats >>.
+with B<$ordinals-E<gt>stats>.
 
 =cut
 
@@ -661,11 +627,6 @@ sub validate {
                 || (!@{$self->{loaded_contents}->[$i] // []}
                     && @{$self->{contents}->[$i] // []})) {
             $self->{stats}->{new}++;
-        }
-        if ($i <= $self->{maxassigned}) {
-            $self->{stats}->{assigned}++;
-        } else {
-            $self->{stats}->{unassigned}++;
         }
         next if ($i > $self->{loaded_maxnum});
 
@@ -683,7 +644,7 @@ sub validate {
     }
 }
 
-=item B<< $ordinals->stats >>
+=item B<$ordinals-E<gt>stats>
 
 Returns the statistics that B<validate> calculate.
 
@@ -715,12 +676,12 @@ use Carp;
 =item B<new> I<%options>
 
 Creates a new instance of the C<OpenSSL::Ordinals::Item> class.  It takes
-options in keyed pair form, i.e. a series of C<< key => value >> pairs.
+options in keyed pair form, i.e. a series of C<key =E<gt> value> pairs.
 Available options are:
 
 =over 4
 
-=item B<< from => STRING >>
+=item B<from =E<gt> STRING>
 
 This will create a new item, filled with data coming from STRING.
 
@@ -730,8 +691,8 @@ STRING must conform to the following EBNF description:
                    exist, ":", platforms, ":", type, ":", features;
   spaces         = space, { space };
   space          = " " | "\t";
-  symbol         = ( letter | "_" ), { letter | digit | "_" };
-  ordinal        = number | "?" | "?+";
+  symbol         = ( letter | "_"), { letter | digit | "_" };
+  ordinal        = number;
   version        = number, "_", number, "_", number, [ letter, [ letter ] ];
   exist          = "EXIST" | "NOEXIST";
   platforms      = platform, { ",", platform };
@@ -743,9 +704,9 @@ STRING must conform to the following EBNF description:
 
 (C<letter> and C<digit> are assumed self evident)
 
-=item B<< name => STRING >>, B<< number => NUMBER >>, B<< version => STRING >>,
-      B<< exists => BOOLEAN >>, B<< type => STRING >>,
-      B<< platforms => HASHref >>, B<< features => LISTref >>
+=item B<name =E<gt> STRING>, B<number =E<gt> NUMBER>, B<version =E<gt> STRING>,
+      B<exists =E<gt> BOOLEAN>, B<type =E<gt> STRING>,
+      B<platforms =E<gt> HASHref>, B<features =E<gt> LISTref>
 
 This will create a new item with data coming from the arguments.
 
@@ -771,7 +732,7 @@ sub new {
         croak "Badly formatted ordinals string: $opts{from}"
             unless ( scalar @a == 4
                      && $a[0] =~ /^[A-Za-z_][A-Za-z_0-9]*$/
-                     && $a[1] =~ /^\d+|\?\+?$/
+                     && $a[1] =~ /^\d+$/
                      && $a[2] =~ /^(?:\*|\d+_\d+_\d+[a-z]{0,2})$/
                      && $a[3] =~ /^
                                   (?:NO)?EXIST:
@@ -801,7 +762,6 @@ sub new {
         $instance = { name      => $opts{name},
                       type      => $opts{type},
                       number    => $opts{number},
-                      intnum    => $opts{intnum},
                       version   => $version,
                       exists    => !!$opts{exists},
                       platforms => { %{$opts{platforms} // {}} },
@@ -817,40 +777,36 @@ sub new {
 sub DESTROY {
 }
 
-=item B<< $item->name >>
+=item B<$item-E<gt>name>
 
 The symbol name for this item.
 
-=item B<< $item->number >> (read-write)
+=item B<$item-E<gt>number>
 
 The positional number for this item.
 
-This may be '?' for an unassigned symbol, or '?+' for an unassigned symbol
-that's an alias for the previous symbol.  '?' and '?+' must be properly
-handled by the caller.  The caller may change this to an actual number.
-
-=item B<< $item->version >> (read-only)
+=item B<$item-E<gt>version>
 
 The version number for this item.  Please note that these version numbers
 have underscore (C<_>) as a separator the the version parts.
 
-=item B<< $item->exists >> (read-only)
+=item B<$item-E<gt>exists>
 
 A boolean that tells if this symbol exists in code or not.
 
-=item B<< $item->platforms >> (read-only)
+=item B<$item-E<gt>platforms>
 
 A hash table reference.  The keys of the hash table are the names of
 the specified platforms, with a value of 0 to indicate that this symbol
 isn't available on that platform, and 1 to indicate that it is.  Platforms
 that aren't mentioned default to 1.
 
-=item B<< $item->type >> (read-only)
+=item B<$item-E<gt>type>
 
 C<FUNCTION> or C<VARIABLE>, depending on what the symbol represents.
 Some platforms do not care about this, others do.
 
-=item B<< $item->features >> (read-only)
+=item B<$item-E<gt>features>
 
 An array reference, where every item indicates a feature where this symbol
 is available.  If no features are mentioned, the symbol is always available.
@@ -874,37 +830,7 @@ sub AUTOLOAD {
     return %{$self->{$item}} if ref($self->{$item}) eq 'HASH';
 }
 
-=item B<< $item->intnum >> (read-write)
-
-Internal positional number.  If I<< $item->number >> is '?' or '?+', the
-caller can use this to set a number for its purposes.
-If I<< $item->number >> is a number, I<< $item->intnum >> should be the
-same
-
-=cut
-
-# Getter/setters
-sub intnum {
-    my $self = shift;
-    my $value = shift;
-    my $item = 'intnum';
-
-    croak "$item called with extra arguments" if @_;
-    $self->{$item} = "$value" if defined $value;
-    return $self->{$item};
-}
-
-sub number {
-    my $self = shift;
-    my $value = shift;
-    my $item = 'number';
-
-    croak "$item called with extra arguments" if @_;
-    $self->{$item} = "$value" if defined $value;
-    return $self->{$item};
-}
-
-=item B<< $item->to_string >>
+=item B<$item-E<gt>to_string>
 
 Converts the item to a string that can be saved in an ordinals file.
 
@@ -918,7 +844,7 @@ sub to_string {
     my @features = $self->features();
     my $version = $self->version();
     $version =~ s|\.|_|g;
-    return sprintf "%-39s %s\t%s\t%s:%s:%s:%s",
+    return sprintf "%-39s %d\t%s\t%s:%s:%s:%s",
         $self->name(),
         $self->number(),
         $version,
@@ -933,7 +859,7 @@ sub to_string {
 
 =head2 Comparators and filters
 
-For the B<< $ordinals->items >> method, there are a few functions to create
+For the B<$ordinals-E<gt>items> method, there are a few functions to create
 comparators based on specific data:
 
 =over 4
@@ -964,7 +890,7 @@ OpenSSL::Ordinals::Item objects.
 =cut
 
 sub by_number {
-    return sub { $_[0]->intnum() <=> $_[1]->intnum() };
+    return sub { $_[0]->number() <=> $_[1]->number() };
 }
 
 =item B<by_version>

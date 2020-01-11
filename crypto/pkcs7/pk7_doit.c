@@ -94,11 +94,12 @@ static int pkcs7_encode_rinfo(PKCS7_RECIP_INFO *ri,
     size_t eklen;
 
     pkey = X509_get0_pubkey(ri->cert);
-    if (pkey == NULL)
+
+    if (!pkey)
         return 0;
 
     pctx = EVP_PKEY_CTX_new(pkey, NULL);
-    if (pctx == NULL)
+    if (!pctx)
         return 0;
 
     if (EVP_PKEY_encrypt_init(pctx) <= 0)
@@ -142,10 +143,11 @@ static int pkcs7_decrypt_rinfo(unsigned char **pek, int *peklen,
     EVP_PKEY_CTX *pctx = NULL;
     unsigned char *ek = NULL;
     size_t eklen;
+
     int ret = -1;
 
     pctx = EVP_PKEY_CTX_new(pkey, NULL);
-    if (pctx == NULL)
+    if (!pctx)
         return -1;
 
     if (EVP_PKEY_decrypt_init(pctx) <= 0)
@@ -1065,7 +1067,7 @@ int PKCS7_signatureVerify(BIO *bio, PKCS7 *p7, PKCS7_SIGNER_INFO *si,
 
     os = si->enc_digest;
     pkey = X509_get0_pubkey(x509);
-    if (pkey == NULL) {
+    if (!pkey) {
         ret = -1;
         goto err;
     }

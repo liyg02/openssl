@@ -13,8 +13,8 @@
 #include <openssl/evp.h>
 #include <openssl/core_names.h>
 #include <openssl/params.h>
-#include "crypto/modes.h"
-#include "crypto/siv.h"
+#include "internal/modes_int.h"
+#include "internal/siv_int.h"
 
 #ifndef OPENSSL_NO_SIV
 

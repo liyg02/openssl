@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_SSLERR_H
-# define OPENSSL_SSLERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_SSLERR_H
-# endif
+#ifndef HEADER_SSLERR_H
+# define HEADER_SSLERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -29,7 +23,7 @@ int ERR_load_SSL_strings(void);
 /*
  * SSL function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define SSL_F_ADD_CLIENT_KEY_SHARE_EXT                   0
 #  define SSL_F_ADD_KEY_SHARE                              0
 #  define SSL_F_BYTES_TO_CIPHER_LIST                       0

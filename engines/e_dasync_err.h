@@ -8,8 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OSSL_ENGINES_E_DASYNC_ERR_H
-# define OSSL_ENGINES_E_DASYNC_ERR_H
+#ifndef HEADER_DASYNCERR_H
+# define HEADER_DASYNCERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -21,7 +21,7 @@
 /*
  * DASYNC function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define DASYNC_F_BIND_DASYNC                             0
 #  define DASYNC_F_CIPHER_AES_128_CBC_CODE                 0
 #  define DASYNC_F_DASYNC_AES128_CBC_HMAC_SHA1_INIT_KEY    0

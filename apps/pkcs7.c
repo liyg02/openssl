@@ -27,17 +27,9 @@ typedef enum OPTION_choice {
 } OPTION_CHOICE;
 
 const OPTIONS pkcs7_options[] = {
-    OPT_SECTION("General"),
     {"help", OPT_HELP, '-', "Display this summary"},
-#ifndef OPENSSL_NO_ENGINE
-    {"engine", OPT_ENGINE, 's', "Use engine, possibly a hardware device"},
-#endif
-
-    OPT_SECTION("Input"),
-    {"in", OPT_IN, '<', "Input file"},
     {"inform", OPT_INFORM, 'F', "Input format - DER or PEM"},
-
-    OPT_SECTION("Output"),
+    {"in", OPT_IN, '<', "Input file"},
     {"outform", OPT_OUTFORM, 'F', "Output format - DER or PEM"},
     {"out", OPT_OUT, '>', "Output file"},
     {"noout", OPT_NOOUT, '-', "Don't output encoded data"},
@@ -45,6 +37,9 @@ const OPTIONS pkcs7_options[] = {
     {"print", OPT_PRINT, '-', "Print out all fields of the PKCS7 structure"},
     {"print_certs", OPT_PRINT_CERTS, '-',
      "Print_certs  print any certs or crl in the input"},
+#ifndef OPENSSL_NO_ENGINE
+    {"engine", OPT_ENGINE, 's', "Use engine, possibly a hardware device"},
+#endif
     {NULL}
 };
 

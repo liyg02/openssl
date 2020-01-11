@@ -7,14 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_TXT_DB_H
-# define OPENSSL_TXT_DB_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_TXT_DB_H
-# endif
+#ifndef HEADER_TXT_DB_H
+# define HEADER_TXT_DB_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/bio.h>

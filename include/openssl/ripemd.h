@@ -7,14 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_RIPEMD_H
-# define OPENSSL_RIPEMD_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_RIPEMD_H
-# endif
+#ifndef HEADER_RIPEMD_H
+# define HEADER_RIPEMD_H
 
 # include <openssl/opensslconf.h>
 

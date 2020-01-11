@@ -8,8 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OSSL_ENGINES_E_CAPI_ERR_H
-# define OSSL_ENGINES_E_CAPI_ERR_H
+#ifndef HEADER_CAPIERR_H
+# define HEADER_CAPIERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -21,7 +21,7 @@
 /*
  * CAPI function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define CAPI_F_CAPI_CERT_GET_FNAME                       0
 #  define CAPI_F_CAPI_CTRL                                 0
 #  define CAPI_F_CAPI_CTX_NEW                              0

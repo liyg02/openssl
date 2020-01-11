@@ -9,7 +9,7 @@
 
 #include <string.h>
 #include <openssl/crypto.h>
-#include "crypto/modes.h"
+#include "internal/modes_int.h"
 
 int CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
                           const unsigned char iv[16],

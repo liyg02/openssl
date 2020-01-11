@@ -7,14 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_EBCDIC_H
-# define OPENSSL_EBCDIC_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_EBCDIC_H
-# endif
+#ifndef HEADER_EBCDIC_H
+# define HEADER_EBCDIC_H
 
 # include <stdlib.h>
 

@@ -7,20 +7,14 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_HMAC_H
-# define OPENSSL_HMAC_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_HMAC_H
-# endif
+#ifndef HEADER_HMAC_H
+# define HEADER_HMAC_H
 
 # include <openssl/opensslconf.h>
 
 # include <openssl/evp.h>
 
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define HMAC_MAX_MD_CBLOCK      128    /* Deprecated */
 # endif
 

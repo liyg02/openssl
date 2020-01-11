@@ -33,12 +33,12 @@ unsigned int OPENSSL_version_patch(void)
 
 const char *OPENSSL_version_pre_release(void)
 {
-    return OPENSSL_VERSION_PRE_RELEASE;
+    return OPENSSL_VERSION_PRE_RELEASE_STR;
 }
 
 const char *OPENSSL_version_build_metadata(void)
 {
-    return OPENSSL_VERSION_BUILD_METADATA;
+    return OPENSSL_VERSION_BUILD_METADATA_STR;
 }
 
 extern char ossl_cpu_info_str[];

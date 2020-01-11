@@ -7,20 +7,14 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef  OPENSSL_CONF_H
-# define OPENSSL_CONF_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_CONF_H
-# endif
+#ifndef  HEADER_CONF_H
+# define HEADER_CONF_H
 
 # include <openssl/bio.h>
 # include <openssl/lhash.h>
 # include <openssl/safestack.h>
 # include <openssl/e_os2.h>
-# include <openssl/types.h>
+# include <openssl/ossl_typ.h>
 # include <openssl/conferr.h>
 
 #ifdef  __cplusplus
@@ -96,7 +90,7 @@ int CONF_dump_bio(LHASH_OF(CONF_VALUE) *conf, BIO *out);
 
 DEPRECATEDIN_1_1_0(void OPENSSL_config(const char *config_name))
 
-#ifndef OPENSSL_NO_DEPRECATED_1_1_0
+#if !OPENSSL_API_1_1_0
 # define OPENSSL_no_config() \
     OPENSSL_init_crypto(OPENSSL_INIT_NO_LOAD_CONFIG, NULL)
 #endif
@@ -110,12 +104,11 @@ struct conf_st {
     CONF_METHOD *meth;
     void *meth_data;
     LHASH_OF(CONF_VALUE) *data;
-    unsigned int flag_dollarid:1;
 };
 
 CONF *NCONF_new(CONF_METHOD *meth);
 CONF_METHOD *NCONF_default(void);
-DEPRECATEDIN_3_0(CONF_METHOD *NCONF_WIN32(void))
+CONF_METHOD *NCONF_WIN32(void);
 void NCONF_free(CONF *conf);
 void NCONF_free_data(CONF *conf);
 
@@ -144,7 +137,7 @@ int CONF_modules_load_file(const char *filename, const char *appname,
                            unsigned long flags);
 void CONF_modules_unload(int all);
 void CONF_modules_finish(void);
-#ifndef OPENSSL_NO_DEPRECATED_1_1_0
+#if !OPENSSL_API_1_1_0
 # define CONF_modules_free() while(0) continue
 #endif
 int CONF_module_add(const char *name, conf_init_func *ifunc,

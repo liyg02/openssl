@@ -328,7 +328,6 @@ $code.=<<___;
 .type	_x86_64_AES_encrypt,\@abi-omnipotent
 .align	16
 _x86_64_AES_encrypt:
-.cfi_startproc
 	xor	0($key),$s0			# xor with key
 	xor	4($key),$s1
 	xor	8($key),$s2
@@ -364,7 +363,6 @@ ___
 	}
 $code.=<<___;
 	.byte	0xf3,0xc3			# rep ret
-.cfi_endproc
 .size	_x86_64_AES_encrypt,.-_x86_64_AES_encrypt
 ___
 
@@ -914,7 +912,6 @@ $code.=<<___;
 .type	_x86_64_AES_decrypt,\@abi-omnipotent
 .align	16
 _x86_64_AES_decrypt:
-.cfi_startproc
 	xor	0($key),$s0			# xor with key
 	xor	4($key),$s1
 	xor	8($key),$s2
@@ -957,7 +954,6 @@ ___
 	}
 $code.=<<___;
 	.byte	0xf3,0xc3			# rep ret
-.cfi_endproc
 .size	_x86_64_AES_decrypt,.-_x86_64_AES_decrypt
 ___
 

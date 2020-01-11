@@ -8,21 +8,15 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_BN_H
-# define OPENSSL_BN_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_BN_H
-# endif
+#ifndef HEADER_BN_H
+# define HEADER_BN_H
 
 # include <openssl/e_os2.h>
 # ifndef OPENSSL_NO_STDIO
 #  include <stdio.h>
 # endif
 # include <openssl/opensslconf.h>
-# include <openssl/types.h>
+# include <openssl/ossl_typ.h>
 # include <openssl/crypto.h>
 # include <openssl/bnerr.h>
 
@@ -67,7 +61,7 @@ extern "C" {
 # define BN_FLG_CONSTTIME        0x04
 # define BN_FLG_SECURE           0x08
 
-# ifndef OPENSSL_NO_DEPRECATED_0_9_8
+# if !OPENSSL_API_0_9_8
 /* deprecated name for the flag */
 #  define BN_FLG_EXP_CONSTTIME BN_FLG_CONSTTIME
 #  define BN_FLG_FREE            0x8000 /* used for debugging */
@@ -109,9 +103,8 @@ void BN_GENCB_set(BN_GENCB *gencb, int (*callback) (int, int, BN_GENCB *),
 
 void *BN_GENCB_get_arg(BN_GENCB *cb);
 
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define BN_prime_checks 0      /* default: select number of iterations based
-                                  * on the size of the number */
+# define BN_prime_checks 0      /* default: select number of iterations based
+                                 * on the size of the number */
 
 /*
  * BN_prime_checks_for_size() returns the number of Miller-Rabin iterations
@@ -176,15 +169,14 @@ void *BN_GENCB_get_arg(BN_GENCB *cb);
  *  (b) >=    6 |     >=    12 |         34 |         64 bit
  */
 
-#  define BN_prime_checks_for_size(b) ((b) >= 3747 ?  3 : \
-                                      (b) >=  1345 ?  4 : \
-                                      (b) >=  476 ?  5 : \
-                                      (b) >=  400 ?  6 : \
-                                      (b) >=  347 ?  7 : \
-                                      (b) >=  308 ?  8 : \
-                                      (b) >=  55  ? 27 : \
-                                      /* b >= 6 */ 34)
-# endif
+# define BN_prime_checks_for_size(b) ((b) >= 3747 ?  3 : \
+                                (b) >=  1345 ?  4 : \
+                                (b) >=  476 ?  5 : \
+                                (b) >=  400 ?  6 : \
+                                (b) >=  347 ?  7 : \
+                                (b) >=  308 ?  8 : \
+                                (b) >=  55  ? 27 : \
+                                /* b >= 6 */ 34)
 
 # define BN_num_bytes(a) ((BN_num_bits(a)+7)/8)
 
@@ -198,7 +190,7 @@ int BN_is_odd(const BIGNUM *a);
 
 void BN_zero_ex(BIGNUM *a);
 
-# if OPENSSL_API_LEVEL > 908
+# if OPENSSL_API_0_9_8
 #  define BN_zero(a)      BN_zero_ex(a)
 # else
 #  define BN_zero(a)      (BN_set_word((a),0))
@@ -355,16 +347,15 @@ DEPRECATEDIN_0_9_8(int
                                         BN_CTX *ctx, void *cb_arg,
                                         int do_trial_division))
 
-DEPRECATEDIN_3_0(int BN_is_prime_ex(const BIGNUM *p, int nchecks, BN_CTX *ctx, BN_GENCB *cb))
-DEPRECATEDIN_3_0(int BN_is_prime_fasttest_ex(const BIGNUM *p, int nchecks, BN_CTX *ctx,
-                            int do_trial_division, BN_GENCB *cb))
 /* Newer versions */
 int BN_generate_prime_ex2(BIGNUM *ret, int bits, int safe,
                          const BIGNUM *add, const BIGNUM *rem, BN_GENCB *cb,
                          BN_CTX *ctx);
 int BN_generate_prime_ex(BIGNUM *ret, int bits, int safe, const BIGNUM *add,
                          const BIGNUM *rem, BN_GENCB *cb);
-int BN_check_prime(const BIGNUM *p, BN_CTX *ctx, BN_GENCB *cb);
+int BN_is_prime_ex(const BIGNUM *p, int nchecks, BN_CTX *ctx, BN_GENCB *cb);
+int BN_is_prime_fasttest_ex(const BIGNUM *p, int nchecks, BN_CTX *ctx,
+                            int do_trial_division, BN_GENCB *cb);
 
 int BN_X931_generate_Xpq(BIGNUM *Xp, BIGNUM *Xq, int nbits, BN_CTX *ctx);
 
@@ -539,7 +530,7 @@ BIGNUM *BN_get_rfc3526_prime_4096(BIGNUM *bn);
 BIGNUM *BN_get_rfc3526_prime_6144(BIGNUM *bn);
 BIGNUM *BN_get_rfc3526_prime_8192(BIGNUM *bn);
 
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 #  define get_rfc2409_prime_768 BN_get_rfc2409_prime_768
 #  define get_rfc2409_prime_1024 BN_get_rfc2409_prime_1024
 #  define get_rfc3526_prime_1536 BN_get_rfc3526_prime_1536

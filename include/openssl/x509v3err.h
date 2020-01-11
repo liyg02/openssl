@@ -8,14 +8,8 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef OPENSSL_X509V3ERR_H
-# define OPENSSL_X509V3ERR_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_X509V3ERR_H
-# endif
+#ifndef HEADER_X509V3ERR_H
+# define HEADER_X509V3ERR_H
 
 # include <openssl/opensslconf.h>
 # include <openssl/symhacks.h>
@@ -29,7 +23,7 @@ int ERR_load_X509V3_strings(void);
 /*
  * X509V3 function codes.
  */
-# ifndef OPENSSL_NO_DEPRECATED_3_0
+# if !OPENSSL_API_3
 #  define X509V3_F_A2I_GENERAL_NAME                        0
 #  define X509V3_F_ADDR_VALIDATE_PATH_INTERNAL             0
 #  define X509V3_F_ASIDENTIFIERCHOICE_CANONIZE             0

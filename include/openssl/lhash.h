@@ -11,14 +11,8 @@
  * Header for dynamic hash table routines Author - Eric Young
  */
 
-#ifndef OPENSSL_LHASH_H
-# define OPENSSL_LHASH_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_LHASH_H
-# endif
+#ifndef HEADER_LHASH_H
+# define HEADER_LHASH_H
 
 # include <openssl/e_os2.h>
 # include <openssl/bio.h>
@@ -98,7 +92,7 @@ void OPENSSL_LH_stats_bio(const OPENSSL_LHASH *lh, BIO *out);
 void OPENSSL_LH_node_stats_bio(const OPENSSL_LHASH *lh, BIO *out);
 void OPENSSL_LH_node_usage_stats_bio(const OPENSSL_LHASH *lh, BIO *out);
 
-# ifndef OPENSSL_NO_DEPRECATED_1_1_0
+# if !OPENSSL_API_1_1_0
 #  define _LHASH OPENSSL_LHASH
 #  define LHASH_NODE OPENSSL_LH_NODE
 #  define lh_error OPENSSL_LH_error

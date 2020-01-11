@@ -11,14 +11,8 @@
  * for the EdelKey project.
  */
 
-#ifndef OPENSSL_SRP_H
-# define OPENSSL_SRP_H
-# pragma once
-
-# include <openssl/macros.h>
-# ifndef OPENSSL_NO_DEPRECATED_3_0
-#  define HEADER_SRP_H
-# endif
+#ifndef HEADER_SRP_H
+# define HEADER_SRP_H
 
 #include <openssl/opensslconf.h>
 

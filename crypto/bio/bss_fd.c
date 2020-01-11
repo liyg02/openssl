@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "bio_local.h"
+#include "bio_lcl.h"
 
 #if defined(OPENSSL_NO_POSIX_IO)
 /*
